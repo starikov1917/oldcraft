@@ -26,3 +26,14 @@ class Address(models.Model):
 
     def __str__(self):
         return self.location.__str__() + " " + self.city + " " + self.addressLine + " " + self.postCode + " " + self.firstName + " " + self.lastName
+
+class BillingAddress(models.Model):
+    postCode = models.TextField(max_length=10, null=False, blank=False, verbose_name="Индекс")
+    city = models.TextField(max_length=100, null=False, blank=False, verbose_name="Населенный пункт")
+    addressLine = models.TextField(max_length=200, null=False, blank=False, verbose_name="Строка адреса")
+    firstName = models.TextField(max_length=100, null=False, blank=False, verbose_name="Имя")
+    lastName = models.TextField(max_length=100, null=False, blank=False, verbose_name="Фамилия")
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.location.__str__() + " " + self.city + " " + self.addressLine + " " + self.postCode + " " + self.firstName + " " + self.lastName
