@@ -1,6 +1,7 @@
 from django.db import models
 from shipping.models import ShippingMethod
 from address.models import Address, BillingAddress
+from product.models import Product
 
 # Create your models here.
 
@@ -38,3 +39,24 @@ class Order(models.Model):
 
     def __str__(self):
         return self.orderNumber
+
+
+def get_product_price():
+    return 12.2
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, verbose_name="Заказ")
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="Товар")
+    quantity = models.IntegerField(verbose_name="Шт", default=1)
+    orderItemPrice = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Цена в заказе")
+
+    def __str__(self):
+        return self.product.__str__() + " в заказе " + self.order.__str__()
+
+class OrderProperty(models.Model):
+    propertyValue = models.CharField(max_length=200, verbose_name="Значение свойства заказ")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    orderPropertyType = models.ForeignKey(OrderPropertyType, on_delete=models.PROTECT, verbose_name="Тип свойства заказа")
+
+    def __str__(self):
+        return self.order.__str__() + ": "+ self.orderPropertyType.__str__() + ": " + self.propertyValue
