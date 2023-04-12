@@ -1,6 +1,7 @@
 from django.db import models
 
 from gallery.models import Image
+from measure.models import MeasureSet
 # Create your models here.
 class ProductType(models.Model):
     title = models.CharField(max_length=50, verbose_name="Тип товара")
@@ -15,7 +16,7 @@ class Product(models.Model):
 
     slug = models.SlugField(max_length=50, unique=True, verbose_name="Slug")
     title = models.CharField(max_length=150, verbose_name="название")
-    rating = models.IntegerField(default=100, verbose_name="Рэйтинг")
+    rating = models.IntegerField(default=100, verbose_name="Рейтинг")
     isActive = models.BooleanField(default=True, verbose_name="Активный?")
     createdAt = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
     updatedAt = models.DateTimeField(auto_now=True, verbose_name="Обновлен")
@@ -39,3 +40,11 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return self.title
+
+class RequiredMeasurementSet(models.Model):
+    measureSet = models.ForeignKey(MeasureSet, on_delete=models.PROTECT, verbose_name="Требуемый набор")
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="Товар")
+
+    def __str__(self):
+        return self.product.__str__() + " -> " + self.measureSet.__str__()
+

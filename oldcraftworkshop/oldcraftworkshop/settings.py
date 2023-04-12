@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'order',
     "product",
     "gallery",
+    "material",
+    "measure",
 ]
 
 MIDDLEWARE = [
