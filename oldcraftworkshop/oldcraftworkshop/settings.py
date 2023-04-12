@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "gallery",
     "material",
     "measure",
+    'production',
 ]
 
 MIDDLEWARE = [

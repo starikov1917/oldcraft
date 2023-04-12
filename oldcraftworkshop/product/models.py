@@ -48,3 +48,19 @@ class RequiredMeasurementSet(models.Model):
     def __str__(self):
         return self.product.__str__() + " -> " + self.measureSet.__str__()
 
+class Section(models.Model):
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to="images/sectoins")
+    slug = models.SlugField(max_length=50, unique=True, verbose_name="Slug")
+
+    def __str__(self):
+        return self.title
+
+
+class SubSection(models.Model):
+    title = models.CharField(max_length=200)
+    section = models.ForeignKey(Section, on_delete=models.PROTECT)
+    slug = models.SlugField(max_length=50, unique=True, verbose_name="Slug")
+
+    def __str__(self):
+        return self.title
