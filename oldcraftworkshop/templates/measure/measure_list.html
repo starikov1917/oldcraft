@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="title text-left mb-4">Все возможные мерки</h1>
+    <section class="merki-section">
+        <h4 class="sub-title mb-3">Не в наборах</h4>
+        <div class="merki-list">
+            <div class="row">
+                {% for object in object_list %}
+
+                <div class="col-lg-3 col-sm-6 col-12 mb-5">
+                    <div class="merki-item">
+                        <div class="merki-item__body">
+                            <div class="merki-item__img"><img src="{{ object.image.url }}" alt=""></div>
+                            <div class="merki-item__name">{{ object.title }}</div>
+                            <div class="merki-item__desc">{{ object.description }}</div>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+
+
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock content %}

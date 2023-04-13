@@ -27,6 +27,7 @@ class Measure(models.Model):
     type = models.ForeignKey(MeasureType, on_delete=models.PROTECT, verbose_name="Тип мерки")
     rating = models.IntegerField(default=100, verbose_name="Рейтинг")
     image = models.ImageField(verbose_name="фото мерки",upload_to="images/measures")
+    # measure_set = models.ManyToManyField(MeasureSet, blank=True, verbose_name='Наборы мерок')
 
 
     def __str__(self):

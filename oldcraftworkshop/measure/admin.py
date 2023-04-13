@@ -19,7 +19,7 @@ class measureOptionInline(admin.TabularInline):
 class MeasureAdmin(admin.ModelAdmin):
     list_display = ('title', 'type', 'rating' )
     fields = ('title', 'type', 'rating', "preview", "image")
-    readonly_fields = ('title', 'type', "preview")
+    readonly_fields = ("preview",)
     ordering = ["rating"]
     inlines = [measureOptionInline]
 
@@ -32,4 +32,14 @@ class MeasureAdmin(admin.ModelAdmin):
 admin.site.register(MeasureOption)
 admin.site.register(MeasureSetItem)
 admin.site.register(MeasureType)
-admin.site.register(MeasureSet)
+
+# class RowInlineTwo(admin.StackedInline):
+#     model = ImgPropertyMaterialProduct
+#     filter_horizontal = ('colors',)
+#
+#
+#
+# @admin.register(MeasureSet)
+# class MeasureSetAdmin(admin.ModelAdmin):
+#     model =
+#     filter_horizontal = ['MeasureSetItem']
