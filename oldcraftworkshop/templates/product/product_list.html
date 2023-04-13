@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="content pt-2 pt-lg-0">
+    <div class="container-fluid">
+
+        <h1 class="title text-left mb-2 mb-md-4">{{ title }}</h1>
+        <div class="categoty-list mb-4">
+            <div class="button-group filter-catalog">
+                {% for button in catalog_navigation %}
+
+                <a class="button filter-catalog__item {% if not button.is_pushed %} button--plain {% endif %}" href="{{ button.url }}">{{button.title}}</a>
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            {% for object in object_list %}
+
+            <div class="col-xl-3 col-lg-4 col-sm-6 col-12 mb-4">
+                <div class="card-item">
+                    <div class="card-item__body">
+                        <div class="card-item__preview mb-2"><img src="{{ object.titlePhoto.image.url}}" alt=""></div>
+                        <div class="card-item__name">{{ object.title }}</div>
+                    </div>
+                    <div class="card-item__footer">
+                        <div class="card-item__price">€{{ object.price }}</div>
+                        <div class="card-item__btn"><a class="button button--plain" data-toggle="modal"
+                                                       data-target="#modal-card"> More </a><a class="button"
+                                                                                                  href="#">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,  user-scalable=no"/>
-    <title>5_about</title>
+    <title>{{ title }}</title>
     <link rel="stylesheet" href="{% static 'style/libs.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'style/main.css' %}"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css"/>
@@ -30,9 +30,9 @@
     {% block modals %}
 
     {% endblock modals %}
-    <script src="js/libs.min.js"></script>
+    <script src="{% static 'js/libs.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script>
-    <script src="js/script.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </div>
 </body>
 </html>
