@@ -12,6 +12,10 @@ class OrderPropertyType(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Свойство заказа"
+        verbose_name_plural = "Свойства заказа"
+
 class OrderStatus(models.Model):
     slug = models.SlugField(max_length=200, verbose_name="Код статуса")
     title = models.CharField(max_length=50, verbose_name="Статус заказа")
@@ -21,6 +25,9 @@ class OrderStatus(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Статус заказа"
+        verbose_name_plural = "Статусы заказа"
 def get_first_status():
     return OrderStatus.objects.get(id=1)
 
@@ -35,11 +42,15 @@ class Order(models.Model):
     shippingMethod = models.ForeignKey(ShippingMethod, on_delete=models.PROTECT,  verbose_name="Способ доставки")
     address = models.ForeignKey(Address, on_delete=models.PROTECT, null=True, verbose_name="Адресс доставки")
     billingAddress = models.ForeignKey(BillingAddress, null=True, on_delete=models.PROTECT, verbose_name="Адрес счета")
-    orderStatus = models.ForeignKey(OrderStatus, on_delete=models.PROTECT, default=get_first_status)
+    orderStatus = models.ForeignKey(OrderStatus, on_delete=models.PROTECT, default=get_first_status, verbose_name="Статус")
 
     def __str__(self):
         return self.orderNumber
 
+    class Meta:
+        verbose_name = "Заказ"
+        verbose_name_plural = "Заказы"
+        ordering = ["-orderNumber"]
 
 def get_product_price():
     return 12.2
@@ -53,6 +64,10 @@ class OrderItem(models.Model):
     def __str__(self):
         return self.product.__str__() + " в заказе " + self.order.__str__()
 
+    class Meta:
+        verbose_name = "Товар в заказе"
+        verbose_name_plural = "Товары в заказе"
+
 class OrderProperty(models.Model):
     propertyValue = models.CharField(max_length=200, verbose_name="Значение свойства заказ")
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
@@ -60,3 +75,7 @@ class OrderProperty(models.Model):
 
     def __str__(self):
         return self.order.__str__() + ": "+ self.orderPropertyType.__str__() + ": " + self.propertyValue
+
+    class Meta:
+        verbose_name = "Знаение свойства заказа"
+        verbose_name_plural = "значения свойств заказов"

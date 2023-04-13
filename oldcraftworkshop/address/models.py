@@ -16,6 +16,10 @@ class Location(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Местоположение"
+        verbose_name_plural = "Местоположения"
+
 class Address(models.Model):
     postCode = models.TextField(max_length=10, null=False, blank=False, verbose_name="Индекс")
     city = models.TextField(max_length=100, null=False, blank=False, verbose_name="Населенный пункт")
@@ -26,6 +30,9 @@ class Address(models.Model):
 
     def __str__(self):
         return self.location.__str__() + " " + self.city + " " + self.addressLine + " " + self.postCode + " " + self.firstName + " " + self.lastName
+    class Meta:
+        verbose_name = "Адрес"
+        verbose_name_plural = "Адреса"
 
 class BillingAddress(models.Model):
     postCode = models.TextField(max_length=10, null=False, blank=False, verbose_name="Индекс")

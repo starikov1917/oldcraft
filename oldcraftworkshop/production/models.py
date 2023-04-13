@@ -13,6 +13,10 @@ class ProductionOrder(models.Model):
     def __str__(self):
         return self.order.__str__() + " -> " + self.title
 
+    class Meta:
+        verbose_name = "Заказ на производство"
+        verbose_name_plural = "Заказы на производство"
+
 
 class ProductionOrderItem(models.Model):
     production_order = models.ForeignKey(ProductionOrder, on_delete=models.PROTECT, verbose_name="Заказ на производство")
@@ -20,6 +24,8 @@ class ProductionOrderItem(models.Model):
 
     def __str__(self):
         return self.production_order.__str__() + " -> " + self.product.__str__()
+
+
 
 class measurementsListItem(models.Model):
     measure_value = models.CharField(max_length=100, verbose_name="Значение мерки")

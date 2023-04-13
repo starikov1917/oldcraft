@@ -7,6 +7,10 @@ class ProductType(models.Model):
     title = models.CharField(max_length=50, verbose_name="Тип товара")
     slug = models.SlugField(unique=True, verbose_name="Символьный код")
 
+    class Meta:
+        verbose_name = "Тип товаров"
+        verbose_name_plural = "Типы товаров"
+
 def get_defoult():
     return ProductType.objects.get(id=1)
 
@@ -33,6 +37,10 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Товар"
+        verbose_name_plural = "Товары"
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="Товар")
     title = models.CharField(max_length=200)
@@ -56,6 +64,9 @@ class Section(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Раздел товаров"
+        verbose_name_plural = "Разделы товаров"
 
 class SubSection(models.Model):
     title = models.CharField(max_length=200)
@@ -64,3 +75,7 @@ class SubSection(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = "Подраздел товаров"
+        verbose_name_plural = "Подразделы товаров"

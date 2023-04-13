@@ -11,4 +11,8 @@ class Image(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Изображение"
+        verbose_name_plural = "Изображения"
+
 

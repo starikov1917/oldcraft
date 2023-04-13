@@ -7,6 +7,9 @@ class MeasureType(models.Model):
 
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name = "Тип мерок"
+        verbose_name_plural = "Типы мерок"
 
 class MeasureSet(models.Model):
     title = models.CharField(max_length=50, verbose_name="Название набора мерок")
@@ -15,6 +18,9 @@ class MeasureSet(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Набор мерок"
+        verbose_name_plural = "Наборы мерок"
 class Measure(models.Model):
     title = models.CharField(max_length=50, verbose_name="Название мерки")
     description = models.CharField(max_length=300, blank=True, null=True, verbose_name="Описание мерки")
@@ -26,6 +32,9 @@ class Measure(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = "Мерка"
+        verbose_name_plural = "Мерки"
 
 class MeasureSetItem(models.Model):
     measure = models.ForeignKey(Measure, on_delete=models.PROTECT, verbose_name="Мерка")
@@ -34,6 +43,8 @@ class MeasureSetItem(models.Model):
     def __str__(self):
         return self.measureSet.__str__() + " -> " + self.measure.__str__()
 
+
+
 class MeasureOption(models.Model):
     measure = models.ForeignKey(Measure, on_delete=models.PROTECT, verbose_name="Мерка")
     value = models.CharField(max_length=50, verbose_name="Вариант мерки")
@@ -41,4 +52,6 @@ class MeasureOption(models.Model):
 
     def __str__(self):
         return self.measure.__str__() + "->" + str(self.value)
-
+    class Meta:
+        verbose_name = "Вариант мерки"
+        verbose_name_plural = "Варианты мерок"

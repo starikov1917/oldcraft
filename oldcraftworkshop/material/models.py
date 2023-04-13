@@ -19,6 +19,10 @@ class Material(models.Model):
 
     def __str__(self):
         return self.title
+    class Meta:
+        verbose_name = "Материал"
+        verbose_name_plural = "Материалы"
+
 
 class RequiredMaterialType(models.Model):
     materialType = models.ForeignKey(MaterialType, on_delete=models.PROTECT)
@@ -28,4 +32,6 @@ class RequiredMaterialType(models.Model):
     def __str__(self):
         return "For " + self.product.__str__() + " we need " + str(self.requiredQuantity) + " of " + self.materialType.__str__()
 
-
+    class Meta:
+        verbose_name = "Требуемый материал"
+        verbose_name_plural = "Требуемые материалы"
