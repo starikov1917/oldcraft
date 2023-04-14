@@ -19,12 +19,14 @@ from measure.views import MeasuresList
 from django.conf.urls.static import static
 from django.conf import settings
 from product.views import ProductListView
-
+from .static_pages import about,payment
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("measures/", MeasuresList.as_view()),
-    path("catalog/", include('product.urls'))
+    path("catalog/", include('product.urls')),
+    path("about/", about, name="about"),
+    path("payment/", payment, name="payment"),
 
 ]
 

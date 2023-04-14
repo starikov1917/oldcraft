@@ -4,8 +4,11 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 from .models import Section, SubSection
 # Create your views here.
+from mixins.mixins import MenuMixin
 
-class ProductListView(ListView):
+
+
+class ProductListView(MenuMixin, ListView):
     model = Product
 
     def get_queryset(self):
@@ -21,6 +24,8 @@ class ProductListView(ListView):
 
         context["title"] = 'Catalog'
         catalog_navigation = []
+
+
         if "subsection_slug" in self.kwargs:
             neigbors = SubSection.objects.filter(section__slug=self.kwargs['section_slug'])
             subsection = get_object_or_404(SubSection, slug=self.kwargs['subsection_slug'])
@@ -53,4 +58,6 @@ class ProductListView(ListView):
                                            neigbors))
 
         context["catalog_navigation"] = catalog_navigation
+        context["menu"] = self.get_menu()
+        context["sections"] = self.get_available_sections()
         return context

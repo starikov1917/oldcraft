@@ -47,6 +47,13 @@ INSTALLED_APPS = [
     'production',
 ]
 
+
+MENU = [
+    {"title": "Payment", "url": 'payment'},
+    {"title": "About", "url": 'about'},
+
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
