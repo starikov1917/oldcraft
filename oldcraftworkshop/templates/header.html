@@ -1,49 +1,86 @@
 {% load static %}
 
 <header class="header">
-          <div class="container-fluid">
-            <div class="row align-items-center">
-              <div class="col-auto d-block d-xl-none">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-auto d-block d-xl-none">
                 <button class="open-menu" arial-label="Открыть меню">
-                  <svg class="icon icon-open">
-                    <use xlink:href="{% static 'images/sprite.svg' %}#icon-open"></use>
-                  </svg>
+                    <svg class="icon icon-open">
+                        <use xlink:href="{% static 'images/sprite.svg' %}#icon-open"></use>
+                    </svg>
                 </button>
-              </div>
-              <div class="col"><a class="logo" href="{% url 'home' %}"><img src="{% static 'images/logo.svg' %}" alt=""></a></div>
-              <div class="col-auto">
+            </div>
+            <div class="col"><a class="logo" href="{% url 'home' %}"><img src="{% static 'images/logo.svg' %}"
+                                                                          alt=""></a></div>
+            <div class="col-auto">
                 <div class="d-flex align-items-center">
-                  <div class="d-none d-xl-block">
-                    <nav class="menu">
-                      <div class="menu__item"> <a class="menu__link" href="{% url 'catalog' %}">Catalog</a>
-                        <div class="sub-menu">
-                          <div class="sub-menu__main">
-                            {% for item in sections %}
-                            <a class="sub-menu__link" href="{% url 'section' section_slug=item.slug%}">{{ item.title }}</a>
+                    <div class="d-none d-xl-block">
+                        <nav class="menu">
+                            <div class="menu__item"><a class="menu__link" href="{% url 'catalog' %}">Catalog</a>
+                                <div class="sub-menu">
+                                    <div class="sub-menu__main">
+                                        {% for item in sections %}
+                                        <a class="sub-menu__link" href="{% url 'section' section_slug=item.slug%}">{{ item.title }}</a>
+                                        {% endfor %}
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% for item in menu %}
+                            <div class="menu__item"><a class="menu__link" href="{% url item.url %}">{{ item.title }}</a>
+                            </div>
                             {% endfor %}
 
 
-                          </div>
-                        </div>
-                      </div>
+                        </nav>
 
-                      {% for item in menu %}
-                      <div class="menu__item"> <a class="menu__link" href="{% url item.url %}">{{ item.title }}</a></div>
-                      {% endfor %}
-
-
-                    </nav>
-
-                  </div>
-                  <a class="header-basket" href="#" data-count="3">
-                    <svg class="icon header-basket__icon">
-                      <use xlink:href="{% static 'images/sprite.svg' %}#icon-basket"></use>
-                    </svg></a>
+                    </div>
+                    <a class="header-basket" href="#" data-count="3">
+                        <svg class="icon header-basket__icon">
+                            <use xlink:href="{% static 'images/sprite.svg' %}#icon-basket"></use>
+                        </svg>
+                    </a>
                 </div>
-              </div>
             </div>
-          </div>
-        </header>
+        </div>
+    </div>
+</header>
+
+<div class="mobile-menu">
+    <button class="open-menu" arial-label="Открыть меню">
+        <svg class="icon icon-close">
+            <use xlink:href="{% static '/images/sprite.svg' %}#icon-close"></use>
+        </svg>
+    </button>
+    <div class="mobile-menu-main"><a class="logo" href="{% url 'home' %}"><img src="{% static  '/images/logo.svg'%}" alt=""></a>
+
+
+        <nav class="menu d-block">
+
+
+            <div class="menu__item"><a class="menu__link" href="{% url 'catalog' %}">Catalog</a>
+                <div class="sub-menu">
+                    <div class="sub-menu__main">
+
+                        {% for item in sections %}
+                        <a class="sub-menu__link" href="{% url 'section' section_slug=item.slug%}">{{ item.title }}</a>
+                        {% endfor %}
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            {% for item in menu %}
+            <div class="menu__item"><a class="menu__link" href="{% url item.url %}">{{ item.title }}</a></div>
+            {% endfor %}
+
+        </nav>
+    </div>
+</div>
 
 
 

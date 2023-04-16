@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content pt-2 pt-lg-0">
+    <div class="container-fluid">
+        <div class="breadcrumb" aria-label="breadcrumb" data-simplebar="data-simplebar">
+            <ul class="breadcrumb__list">
+                <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'catalog' %}">Catalog</a></li>
+                {% if object.section %}
+                <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'section' object.section.slug %}">{{ object.section.title }}</a></li>
+                {% endif %}
+                {% if object.subsection %}
+                <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'subsection' object.section.slug object.subsection.slug %}">{{ object.subsection.title }}</a></li>
+                {% endif %}
+                <li class="breadcrumb__item">
+                    <span class="breadcrumb__link breadcrumb__link--current">{{ title }}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="card row" id="bx_117848907_573">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <div class="card__images">
+
+                    <div class="swiper-container swiper-card swiper-card-slider swiper-container-initialized swiper-container-vertical swiper-container-pointer-events swiper-container-free-mode swiper-container-thumbs">
+
+                        <div class="swiper-wrapper" id="swiper-wrapper-c6c8b9408e610f69" aria-live="polite"
+                             style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px);">
+
+                            {% for photo in gallery %}
+                            <div class="swiper-slide swiper-slide-visible swiper-slide-active swiper-slide-thumb-active"
+                                 data-id="6398" style="height: 76px; margin-bottom: 20px;" role="group"
+                                 aria-label="1 / 4"><img
+                                    src="{{ photo.url }}">
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                    <div class="swiper-container swiper-card-thumbs swiper-card-thumbs-slider swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events swiper-container-autoheight">
+                        <div class="swiper-wrapper" id="swiper-wrapper-6c095c4d1afb53fc" aria-live="polite"
+                             style="transition-duration: 0ms; transform: translate3d(0px, 0px, 0px); height: 342px;">
+                            {% for photo in gallery %}
+                            <div class="swiper-slide swiper-slide-active" style="width: 578px;">
+                                <span class="sw-img-wrap">
+                                    <a data-fancybox="demo" class="item__zoom"
+                                       data-src="{{ photo.url }}">
+				    <svg class="icon icon-zoom-in icon--white">
+				      <use xlink:href="{% static '/images/sprite.svg' %}#icon-zoom-in"></use>
+				    </svg></a><img src="{{ photo.url }}"></span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span></div>
+                </div>
+            </div>
+            <div class="col-lg col-md-10">
+                <div class="card__info">
+                    <h1 class="title text-left mb-2 mb-md-4">{{ object.title }}</h1>
+                    <div class="content__big">
+                        {{ object.description |linebreaks }}
+                    </div>
+
+
+                    <div class="definitions-list mb-3 mb-md-4 mb-lg-3">
+                        <div class="definition-item"><strong class="definition-item__name">Article:</strong>
+                            <div class="definition-item__value">С_114</div>
+                        </div>
+                        <div class="definition-item"><strong class="definition-item__name">Material:</strong>
+                            <div class="definition-item__value">100% wool</div>
+                        </div>
+                        <div class="definition-item"><strong class="definition-item__name">Dating:</strong>
+                            <div class="definition-item__value">1035-1165 AD</div>
+                        </div>
+                    </div>
+
+                    <div class="section-card-count mb-2 mb-md-3" data-entity="quantity-block" style="">
+                        <div class="section-title section-card-count__title">Quantity:</div>
+                        <div class="count-current">
+                            <button class="count-current__button product-item-amount-field-btn-disabled"
+                                    id="bx_117848907_573_quant_down" type="button">-
+                            </button>
+                            <input class="count-current__value" name="count" id="bx_117848907_573_quantity" type="text"
+                                   value="1" data-min="1" data-max="{{ object.availableQuantity }}"
+                                   onkeypress="validate(event)"
+                                   autocomplete="off">
+                            <button class="count-current__button" id="bx_117848907_573_quant_up" type="button">+
+                            </button>
+                        </div>
+                        <div class="section-card-count__name">pcs.</div>
+                    </div>
+                    <div class="mb-3 mb-md-4">
+                        <div class="basket-summ mb-1">Total: <span
+                                id="bx_117848907_573_price_total">€{{ object.price }}</span></div>
+                    </div>
+                    <div style="display: none; font-size: 27px;" id="bx_117848907_573_price">€149</div>
+                </div>
+            </div>
+            <div class="offset-lg-7 col-lg">
+                <div class="row">
+                    <div class="col-lg-5 col-md-4" id="bx_117848907_573_basket_actions" style="display: ;">
+                        <button class="button button--card h-50" id="bx_117848907_573_add_basket_link">Add to cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

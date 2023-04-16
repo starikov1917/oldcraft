@@ -38,7 +38,7 @@ class SubSection(models.Model):
     slug = models.SlugField(max_length=50, unique=True, verbose_name="Slug")
 
     def __str__(self):
-        return self.title
+        return self.section.title + "->" + self.title
 
     class Meta:
         verbose_name = "Подраздел товаров"
@@ -73,6 +73,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Товар"
         verbose_name_plural = "Товары"
+
+    def get_absolute_url(self):
+        return reverse("product", kwargs={"product_slug":self.slug})
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name="Товар")

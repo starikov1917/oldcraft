@@ -22,3 +22,6 @@ def get_products(**kwargs):
     else:
         return Product.objects.all()
 
+def get_product(slug: str):
+    return get_object_or_404(Product, slug=slug)
+

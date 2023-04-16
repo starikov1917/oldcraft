@@ -1,11 +1,10 @@
 from django.shortcuts import render, reverse
-from .models import Product
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
-from .models import Section, SubSection
+from django.views.generic import ListView, DetailView
+from .models import Section, SubSection, ProductImage,Product
 # Create your views here.
 from mixins.mixins import MenuMixin
-from .logic import get_subsection, get_sections, get_section, get_subsections, get_products
+from .logic import get_subsection, get_sections, get_section, get_subsections, get_products, get_product
 from django.http import Http404
 
 class ProductListView(MenuMixin, ListView):
@@ -76,4 +75,22 @@ class SectionListVies(MenuMixin, ListView):
         context["title"] = 'OldCraft workshop'
         context["menu"] = self.get_menu()
         context["sections"] = self.get_available_sections()
+        return context
+
+class ProductDetailView(MenuMixin, DetailView):
+    model = Product
+    slug_url_kwarg = 'product_slug'
+
+    def get_queryset(self):
+        return get_products()
+
+    def get_context_data(self,  **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context['title'] = product.title
+        context["menu"] = self.get_menu()
+        context["sections"] = self.get_available_sections()
+        context['gallery'] = [product.titlePhoto.image] # фото анонса
+        context['gallery'] += list(map(lambda product: product.image, list(ProductImage.objects.filter(product__slug=product.slug))))  # все связанные фото
+
         return context
