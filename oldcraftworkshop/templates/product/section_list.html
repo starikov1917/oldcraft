@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="index-slider swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+    <div class="swiper-wrapper" id="swiper-wrapper-10a710eddf5d9346c5" aria-live="off"
+         style="transition-duration: 0ms; transform: translate3d(-712px, 0px, 0px);">
+        <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active swiper-slide-prev"
+             style="background-image: url(&quot;{% static '/slider/slider1' %}&quot;); width: 712px;"
+             data-swiper-slide-index="0" role="group" aria-label="1 / 1">
+            <div class="index-slider__title">Ткацкая мастерская OldСraft</div>
+            <div class="index-slider__desc">Ткани ручной работы, одежда и аксессуары</div>
+        </div>
+        <div class="swiper-slide swiper-slide-active swiper-slide-duplicate-next swiper-slide-duplicate-prev"
+             style="background-image: url(&quot;{% static '/slider/slider2.jpg' %}&quot;); width: 712px;"
+             data-swiper-slide-index="0" role="group" aria-label="1 / 1">
+            <div class="index-slider__title">Ткацкая мастерская OldСraft</div>
+            <div class="index-slider__desc">Ткани ручной работы, одежда и аксессуары</div>
+        </div>
+        <div class="swiper-slide swiper-slide-duplicate swiper-slide-duplicate-active swiper-slide-next"
+             style="background-image: url(&quot;{% static '/slider/slider1' %}&quot;); width: 712px;"
+             data-swiper-slide-index="0" role="group" aria-label="1 / 1">
+            <div class="index-slider__title">Ткацкая мастерская OldСraft</div>
+            <div class="index-slider__desc">Ткани ручной работы, одежда и аксессуары</div>
+        </div>
+    </div>
+    <div class="swiper-pagination swiper-pagination-clickable swiper-pagination-bullets"><span
+            class="swiper-pagination-bullet swiper-pagination-bullet-active" tabindex="0" role="button"
+            aria-label="Go to slide 1"></span></div>
+    <span class="swiper-notification" aria-live="assertive" aria-atomic="true"></span>
+</div>
+<div class="content pt-2 pt-lg-0">
+    <div class="container-fluid">
+        <section class="index-catalog">
+            <div class="title">Catalog</div>
+            <div class="catalog">
+                <div class="row">
+                    {% for object in object_list %}
+                    <div class="col-sm-6">
+                        <a class="catalog-product" href="{{ object.get_absolute_url }}">
+                            <div class="catalog-product__preview"><img src="{{ object.image.url }}" alt=""></div>
+                            <div class="catalog-product__link">
+                                <div class="link-preview"><span>{{ object.title }}</span>
+                                    <div class="link-preview__icon">
+                                        <svg class="icon icon-arrow-link">
+                                            <use xlink:href="{% static '/images/sprite.svg' %}#icon-arrow-link"></use>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <div class="index-advantages">
+            <div class="list-advantages row">
+                <div class="col-lg-6 col-12">
+                    <div class="advantages-item">
+                        <div class="advantages-item__icon">
+                            <svg class="icon icon-advantages-1">
+                                <use xlink:href="{% static '/images/sprite.svg' %}#icon-advantages-1"></use>
+                            </svg>
+                        </div>
+                        <div class="advantages-item__name">Only natural materials</div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-12">
+                    <div class="advantages-item mb-0">
+                        <div class="advantages-item__icon">
+                            <svg class="icon icon-advantages-3">
+                                <use xlink:href="{% static '/images/sprite.svg' %}#icon-advantages-3"></use>
+                            </svg>
+                        </div>
+                        <div class="advantages-item__name">Exclusively for reenactors</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

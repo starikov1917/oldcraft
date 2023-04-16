@@ -340,10 +340,11 @@ img {
 
 .menu__item {
     position: relative;
+    margin-right: 32px; /*  убрать если будет выбор языка*/
 }
 
 .menu__item:not(:last-child) {
-    margin-right: 32px;
+    /* margin-right: 32px;  добавить если будет выбор языка*/
 }
 
 .menu__link {

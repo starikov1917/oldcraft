@@ -49,6 +49,9 @@ class ProductListView(MenuMixin, ListView):
                                                                 "is_pushed": pushed_subsection_slug == subsection.slug},
                                             neigbors))
         else:
+            catalog_navigation = [{"title":"All products",
+                                   "url": "",
+                                   "is_pushed": True}]
             neigbors = Section.objects.all()
             catalog_navigation += list(map(lambda section: {"title": section.title,
                                                                "url": section.get_absolute_url(),
@@ -56,6 +59,21 @@ class ProductListView(MenuMixin, ListView):
                                            neigbors))
 
         context["catalog_navigation"] = catalog_navigation
+        context["menu"] = self.get_menu()
+        context["sections"] = self.get_available_sections()
+        return context
+
+
+class SectionListVies(MenuMixin, ListView):
+    model = Section
+
+    def get_queryset(self):
+        # тут можно отфильтровать по активности раздела
+        return Section.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'OldCraft workshop'
         context["menu"] = self.get_menu()
         context["sections"] = self.get_available_sections()
         return context

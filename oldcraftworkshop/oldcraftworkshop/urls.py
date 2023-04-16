@@ -18,17 +18,22 @@ from django.urls import path, include
 from measure.views import MeasuresList
 from django.conf.urls.static import static
 from django.conf import settings
-from product.views import ProductListView
-from .static_pages import about,payment
+from product.views import ProductListView, SectionListVies
+from .static_pages import static_page
 
 urlpatterns = [
+    path('', SectionListVies.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path("measures/", MeasuresList.as_view()),
-    path("catalog/", include('product.urls')),
-    path("about/", about, name="about"),
-    path("payment/", payment, name="payment"),
-
+    path("catalog/", include('product.urls'))
 ]
+
+## Статические страницы
+urlpatterns += [
+    path("about/", static_page("About", "static_pages/about.html"), name="about"),
+    path("payment/", static_page("Payments", "static_pages/payment.html"), name="payment"),
+]
+
 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

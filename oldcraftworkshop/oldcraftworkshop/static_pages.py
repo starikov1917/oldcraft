@@ -3,16 +3,13 @@ from mixins.mixins import MenuMixin
 from product.logic import get_sections
 
 
-def about(request):
-    mexin = MenuMixin()
-    return render(request, "static_pages/about.html",
-                  context={"title":"About",
-                           "menu" : mexin.get_menu(),
-                           "sections" : get_sections()})
+def static_page(title: str="OldCraft workshop", tamplate="base.html"):
 
-def payment(request):
-    mexin = MenuMixin()
-    return render(request, "static_pages/about.html",
-                  context={"title":"Payment",
-                           "menu" : mexin.get_menu(),
-                           "sections" : get_sections()})
+    def page(request):
+        mexin = MenuMixin()
+        return render(request, tamplate,
+                      context={"title": title,
+                               "menu": mexin.get_menu(),
+                               "sections": get_sections()})
+
+    return page
