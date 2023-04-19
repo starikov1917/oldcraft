@@ -129,6 +129,7 @@ $("form[name=oformlenie]").submit(function(event) {
           }
       }
 
+
       if($(this).attr("name") == "phone") {
 
         if( $(this).val().length > 15) {
@@ -174,37 +175,28 @@ $(document).on("click" , ".tabs-item" , function(event) {
 });
 
 $(document).on("click", ".btn-number",function(e) {
-
   var type = $(this).attr('data-type');
   var input = $(this).closest('.count-current').find('input');
   var min = input.attr('data-min');
   var max = input.attr('data-max');
   min = parseInt(min);
   max = parseInt(max);
-  var currentVal;
-  var value = input.val();
-  if(type == 'minus')
-  {
-      value - 1
-      if(value>min)
-      {
-          currentVal = parseInt(value) - 1;
-      }
-      else {
-        return false
-      }
+
+  var value = parseInt(input.val());
+  console.log(value)
+
+  if (type == 'plus'){
+        input.val(Math.min(parseInt(max), value + 1))
   }
-  if(type == 'plus')
-  {
-      value + 1
-      
-      if(value<max)
-      {
-          currentVal = parseInt(value) + 1;   
-      }
+  if (type == 'minus'){
+        input.val(Math.max(1, value - 1))
   }
-  input.val(currentVal);
+
 });
+
+
+
+
 
 $(document).on("blur" , ".count-current__value" , function(event) {
   if($(this).val() === "") {
@@ -253,3 +245,11 @@ $(document).mouseup(function(e) {
       $(".site-lang").removeClass("site-lang--active")
   }
 });
+
+$(document).on("click", ".modal-added-item", function(element){
+    $(this).addClass("hiden")
+})
+
+
+
+

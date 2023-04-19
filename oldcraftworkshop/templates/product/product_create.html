@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content pt-2 pt-lg-0">
+    <div class="container-fluid">
+        <form action="{% url 'product_create' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button type="submit" class="button button--card h-50" id="bx_117848907_573_add_basket_link">Create
+            </button>
+
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

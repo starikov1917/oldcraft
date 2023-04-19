@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
-
 from django.utils.safestring import mark_safe
+
 # Register your models here.
 
 
@@ -32,14 +32,3 @@ class MeasureAdmin(admin.ModelAdmin):
 admin.site.register(MeasureOption)
 admin.site.register(MeasureSetItem)
 admin.site.register(MeasureType)
-
-# class RowInlineTwo(admin.StackedInline):
-#     model = ImgPropertyMaterialProduct
-#     filter_horizontal = ('colors',)
-#
-#
-#
-# @admin.register(MeasureSet)
-# class MeasureSetAdmin(admin.ModelAdmin):
-#     model =
-#     filter_horizontal = ['MeasureSetItem']

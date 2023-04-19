@@ -62,30 +62,17 @@
                         {{ object.description |linebreaks }}
                     </div>
 
-
-                    <div class="definitions-list mb-3 mb-md-4 mb-lg-3">
-                        <div class="definition-item"><strong class="definition-item__name">Article:</strong>
-                            <div class="definition-item__value">С_114</div>
-                        </div>
-                        <div class="definition-item"><strong class="definition-item__name">Material:</strong>
-                            <div class="definition-item__value">100% wool</div>
-                        </div>
-                        <div class="definition-item"><strong class="definition-item__name">Dating:</strong>
-                            <div class="definition-item__value">1035-1165 AD</div>
-                        </div>
-                    </div>
-
                     <div class="section-card-count mb-2 mb-md-3" data-entity="quantity-block" style="">
                         <div class="section-title section-card-count__title">Quantity:</div>
                         <div class="count-current">
-                            <button class="count-current__button product-item-amount-field-btn-disabled"
-                                    id="bx_117848907_573_quant_down" type="button">-
+                            <button class="count-current__button btn-number product-item-amount-field-btn-disabled"
+                                    data-type="minus"  type="button">-
                             </button>
-                            <input class="count-current__value" name="count" id="bx_117848907_573_quantity" type="text"
+                            <input class="count-current__value" name="count" type="text"
                                    value="1" data-min="1" data-max="{{ object.availableQuantity }}"
                                    onkeypress="validate(event)"
                                    autocomplete="off">
-                            <button class="count-current__button" id="bx_117848907_573_quant_up" type="button">+
+                            <button class="count-current__button btn-number" data-type="plus" type="button">+
                             </button>
                         </div>
                         <div class="section-card-count__name">pcs.</div>
@@ -100,7 +87,7 @@
             <div class="offset-lg-7 col-lg">
                 <div class="row">
                     <div class="col-lg-5 col-md-4" id="bx_117848907_573_basket_actions" style="display: ;">
-                        <button class="button button--card h-50" id="bx_117848907_573_add_basket_link">Add to cart
+                        <button class="button button--card h-50 add_from_card"data-slug="{{object.slug}}" data-price="{{object.price}}" data-max="{{object.availableQuantity}}">Add to cart
                         </button>
                     </div>
                 </div>
@@ -108,4 +95,5 @@
         </div>
     </div>
 </div>
+{% include "modals/added_to_cart.html" %}
 {% endblock content %}

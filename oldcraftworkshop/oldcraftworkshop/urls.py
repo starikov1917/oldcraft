@@ -20,18 +20,22 @@ from django.conf.urls.static import static
 from django.conf import settings
 from product.views import ProductListView, SectionListVies
 from .static_pages import static_page
+from basket.basket import basket
 
 urlpatterns = [
     path('', SectionListVies.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path("measures/", MeasuresList.as_view()),
-    path("catalog/", include('product.urls'))
+    path("catalog/", include('product.urls')),
+    path("basket/", static_page("Cart", "basket/basket.html"), name="basket")
 ]
 
 ## Статические страницы
 urlpatterns += [
     path("about/", static_page("About", "static_pages/about.html"), name="about"),
     path("payment/", static_page("Payments", "static_pages/payment.html"), name="payment"),
+
+
 ]
 
 
