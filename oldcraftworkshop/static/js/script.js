@@ -174,6 +174,10 @@ $(document).on("click" , ".tabs-item" , function(event) {
   $(".tabs-body#"+id).addClass("tabs-body--active")
 });
 
+
+
+
+
 $(document).on("click", ".btn-number",function(e) {
   var type = $(this).attr('data-type');
   var input = $(this).closest('.count-current').find('input');
@@ -183,14 +187,21 @@ $(document).on("click", ".btn-number",function(e) {
   max = parseInt(max);
 
   var value = parseInt(input.val());
-  console.log(value)
+
+  var new_val = 0
 
   if (type == 'plus'){
-        input.val(Math.min(parseInt(max), value + 1))
+        new_val = Math.min(parseInt(max), value + 1)
+        input.val(new_val)
   }
   if (type == 'minus'){
-        input.val(Math.max(1, value - 1))
+        new_val = Math.max(1, value - 1)
+        input.val(new_val)
   }
+    var sub_total = $("#sub-total")
+
+    sub_total[0].textContent = (parseFloat(sub_total[0].getAttribute("data-price")) * new_val).toFixed(2)
+
 
 });
 

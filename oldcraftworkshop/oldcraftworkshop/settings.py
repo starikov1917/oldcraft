@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "material",
     "measure",
     'production',
+    "rest_framework"
 ]
 
 

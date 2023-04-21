@@ -1646,11 +1646,20 @@ transition: all 0.3s;
 }
 
 
+
+
+
 .hiden {
+
 visibility: hidden;
 opacity:0;
 transition: all 0.3s;
+max-height: 0px;
+padding-bottom:0;
+margin-bottom:0;
 }
+
+
 
 .modal-content2 {
     position: absolute;

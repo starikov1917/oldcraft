@@ -7,6 +7,19 @@ function is_in_cart(carti, slug) {
     return slug in carti
 }
 
+function increment_basket_counter(){
+    basket =  $(".basket-value")
+    old_value = parseInt(basket.text())
+
+    render_basket_value(old_value + 1)
+}
+
+function decrement_basket_counter(){
+    basket =  $(".basket-value")
+    old_value = parseInt(basket.text())
+    render_basket_value(old_value - 1)
+}
+
 
 $(document).on("click" , ".add_from_catalog", function() {
     var max = $(this).attr('data-max')
@@ -66,10 +79,22 @@ function delete_from_cart(product_slug) {
     cart3 = JSON.parse(localStorage.getItem(CART_KEY))
     if (cart3) {
         delete cart3[product_slug]
-        $("#" + product_id).remove()
+        element_for_deleting = $("#" + product_slug)
+        element_for_deleting.attr("id", "")
+        element_for_deleting.addClass("hiden")
+        var price = $('#' + product_slug + "-subtotal")
+        render_total_cost(-1 * parseFloat(price[0].textContent), true)
+        if (!(cart3) || (Object.keys(cart3).length === 0 && cart3.constructor === Object))  {
+            $(".basket").addClass("hiden")
+            $("#empty-basket-label").removeClass("hiden")
+
+        }
+        setTimeout(function(){
+            element_for_deleting.remove()
+        }, 250)
     }
     localStorage.setItem(CART_KEY, JSON.stringify(cart3))
-    //render_empty_cart()
+    decrement_basket_counter()
 }
 
 
@@ -98,16 +123,28 @@ function add_to_cart(product_id, price, quantity, max, product_title){
             cart3[product_id]["quantity"] = quantity
             cart3[product_id]["price"] = price
             added_to_cart_notification(product_title)
+            increment_basket_counter()
+
+
         }
     }
-    render_basket_value(Object.keys(cart3).length)
 
     localStorage.setItem(CART_KEY, JSON.stringify(cart3))
 }
 
 
 
+
+
 function get_product_by_slug(slug){
+
+
+
+
+
+
+
+
     if (slug == "tunic2") {
     return {"slug": "tunic2",
             "title": "Туника тестовая 2",
@@ -137,14 +174,18 @@ function get_product_by_slug(slug){
 
 function render_total_cost(value, update_mode){
     if (update_mode) {
+        console.log("сколько прибавить",value)
+        temp_value = parseFloat($(".total").text()) + value
+        $(".total").text(temp_value.toFixed(2))
 
     } else {
-        $(".basket-summ").text("€" + value)
+        $(".total").text(value.toFixed(2))
     }
 }
 
 
 function renderCart(){
+
     cart = JSON.parse(localStorage.getItem(CART_KEY))
     var basket_body = document.querySelector(".basket-body");
     var template = document.querySelector('#basketrow');
@@ -152,38 +193,80 @@ function renderCart(){
     if (!(cart) || (Object.keys(cart).length === 0 && cart.constructor === Object))  {
         render_empty_cart()
     } else {
-        for (product_id in cart) {
-            var product = get_product_by_slug(product_id)
-            console.log(cart[product_id])
-            total_cost += product.price * cart[product_id]["quantity"]
+        for (slug in cart) {
+
+
+
             var clone = template.content.cloneNode(true);
-
             var row = clone.querySelectorAll(".basket-item")
-            row[0].setAttribute("id", product_id)
-
-
-            var title = clone.querySelectorAll(".basket-item__name")
-            title[0].textContent = product.title
-
-            var quantity = clone.querySelectorAll(".count-current__value")
-            quantity[0].value = cart[product_id]['quantity']
-            quantity[0].setAttribute("data-slug", product_id)
-            quantity[0].setAttribute("data-price", product.price)
-            quantity[0].setAttribute("data-max", product.availableQuantity)
-
-            var photo = clone.querySelectorAll(".basket-item__preview img")
-            photo[0].setAttribute("src", product.titlePhoto)
-
-
-            var price = clone.querySelectorAll(".basket-item__summ")
-            console.log(price[0])
-            price[0].textContent = "€" + product.price
-
+            row[0].setAttribute("id", slug)
             var del_button = clone.querySelectorAll(".del-btn")
-            del_button[0].setAttribute("data-slug", product_id)
+            del_button[0].setAttribute("data-slug", slug)
+            var title = clone.querySelectorAll(".basket-item__name")
+            title[0].setAttribute("id", slug)
+            var quantity = clone.querySelectorAll(".count-current__value")
+            quantity[0].value = cart[slug]['quantity']
+            quantity[0].setAttribute("data-slug", slug)
+
+            quantity[0].setAttribute("id", slug)
+
+            var image = clone.querySelectorAll("img")
+            image[0].setAttribute("id", slug + "-img")
+
+            var price = clone.querySelectorAll(".subtotal")
+            price[0].setAttribute("id", slug + "-subtotal")
+
+
+
+
+
+            $.ajax({
+            url: 'http://localhost:8000/api/v1/product/' + slug + "/",
+            type: 'get',
+            success: function(response){
+
+                var title = $("#" + response.slug + " .basket-item__name")
+                console.log(response)
+                title[0].textContent = response.title
+
+
+
+                var image = $("#" + response.slug + "-img")
+
+                var price = $('#' + response.slug + "-subtotal")
+
+
+                // тут запросить по АПИ настоящее изображение
+                //image.attr("src", response.titlePhoto)
+
+                var quantity_input = $("#" + response.slug + " .count-current__value")
+                quantity_input[0].setAttribute("data-max", response.availableQuantity)
+                quantity_input[0].setAttribute("data-price", response.price)
+
+
+
+                if (quantity_input[0].value > response.availableQuantity)    {
+                    quantity_input[0].value = response.availableQuantity
+                }
+
+                sub_sum = response.price * quantity_input[0].value
+                price[0].textContent = sub_sum.toFixed(2)
+                render_total_cost(sub_sum, true)
+
+                if (response.availableQuantity == 0) {
+                    var temp_row = $(".basket-item #" + response.slug)
+                    delete_from_cart(response.slug)
+                }
+
+
+
+
+
+            }
+            })
+
             basket_body.appendChild(clone)
         }
-
         render_total_cost(total_cost, false)
     }
 
@@ -199,34 +282,36 @@ $(document).on("click" , ".del-btn", function() {
 
 
 $(document).on("click" , ".add-from-basket", function(element) {
-  var type = $(this).attr('data-type');
-  var input = $(this).closest('.count-current').find('input');
-  var min = input.attr('data-min');
-  var max = input.attr('data-max');
+      var type = $(this).attr('data-type');
+      var input = $(this).closest('.count-current').find('input');
+      var min = input.attr('data-min');
+      var max = input.attr('data-max');
 
-  var price = input.attr('data-price')
-  var slug =  input.attr('data-slug')
-  var value = parseInt(input.val());
-  var new_val = 0
-  var quantity
-  if (type == 'plus'){
-        new_val = Math.min(value + 1, parseInt(max))
-        input.val(new_val)
-        quantity = 1
-  }
-  if (type == 'minus'){
-        new_val = Math.min(Math.max(1, value - 1))
-        input.val(new_val)
-        quantity = -1
-  }
+      var price = input.attr('data-price')
+      var slug =  input.attr('data-slug')
+      var value = parseInt(input.val());
+      var new_val = 0
+      var quantity
+      if (type == 'plus'){
+            new_val = Math.min(value + 1, parseInt(max))
+            input.val(new_val)
+            quantity = 1
+      }
+      if (type == 'minus'){
+            new_val = Math.min(Math.max(1, value - 1))
+            input.val(new_val)
+            quantity = -1
+      }
 
-  if (new_val != value) {location.reload()}
-  add_to_cart(slug, price, quantity, parseInt(max), "product_title")
-  console.log("кликнул тут", slug)
+      if (new_val != value) {
+            var sub_sum = $("#"+ slug + '-subtotal')
+            sub_sum[0].textContent = (parseFloat(sub_sum[0].textContent) + quantity *  parseFloat(price)).toFixed(2)
+            render_total_cost(quantity * parseFloat(price), true)
 
+      }
+      add_to_cart(slug, price, quantity, parseInt(max), "product_title")
 
 })
-
 
 
 

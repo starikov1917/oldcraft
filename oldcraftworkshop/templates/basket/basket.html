@@ -4,78 +4,89 @@
 <div class="content pt-2 pt-lg-0">
     <div class="container-fluid">
         <h1 class="title text-left mb-2 mb-md-5 title--basket">PRODUCTS IN THE CART</h1>
-            <div class="basket">
-                <div class="basket-header row">
-                    <div class="col offset-lg-2 col-lg-3 col-md-6">
-                        <div class="basket-header__name">Product name</div>
-                    </div>
-                    <div class="col-lg-2 col-md">
-                        <div class="basket-header__count">Quantity</div>
-                    </div>
-                    <div class="col-lg-2 col-md">
-                        <div class="basket-header__summ">Amount</div>
-                    </div>
-                    <div class="col-xl col-lg-2 col-md">
-                        <div class="basket-header__delete">Remove</div>
-                    </div>
-                </div>
-                <div class="basket-body">
+        <span id="empty-basket-label" class="hiden">Your cart is empty</span>
+        <div class="basket">
 
-                </div>
 
-                <template id="basketrow">
-                    <div class="basket-item row template">
-                        <div class="col-lg-2 col-md-3">
-                            <div class="basket-item__preview"><img src="images/basket-item-1.jpg" alt=""></div>
-                        </div>
-                        <div class="col-xl col-md-3">
-                            <div class="basket-item__info">
-                                <div class="basket-item__name">Ткань Т_106</div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md">
-                            <div class="basket-item__count">
-                                <div class="count-current">
-                                    <button class="count-current__button add-from-basket" data-type="minus"
-                                            data-field="count"
-                                            type="button">-
-                                    </button>
-                                    <input class="count-current__value" name="count" type="text" value="6" data-min="1"
-                                           data-max="100" onkeypress="validate(event)">
-                                    <button class="count-current__button add-from-basket" data-type="plus" data-field="count"
-                                            type="button">+
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md">
-                            <div class="basket-item__summ">45 000&nbsp;₽</div>
-                        </div>
-                        <div class="col-xl col-lg-2 col-md">
-                            <div class="basket-item__delete"><a href="" class="del-btn">
-                                <svg class="icon icon-delete icon--brand">
-                                    <use xlink:href="{% static 'images/sprite.svg' %}#icon-delete"></use>
-                                </svg>
-                            </a></div>
-                        </div>
-                    </div>
-                </template>
-
-                <div class="basket-footer">
-                    <div class="row">
-                        <div class="offset-md-5"></div>
-                        <div class="col-lg-2 col-md-3 order-2 order-md-1 pt-2 pt-md-1">
-                            <button class="button button--basket" type="submit">
-                                Proceed to checkout
-                            </button>
-                        </div>
-                        <div class="col-md-4 offset-lg-1 order-1 order-md-2">
-                            <div class="basket-summ">123123€</div>
-                        </div>
-                    </div>
+            <div class="basket-header row">
+                <div class="col offset-lg-2 col-lg-3 col-md-6">
+                    <div class="basket-header__name">Product name</div>
                 </div>
+                <div class="col-lg-2 col-md">
+                    <div class="basket-header__count">Quantity</div>
+                </div>
+                <div class="col-lg-2 col-md">
+                    <div class="basket-header__summ">Amount</div>
+                </div>
+                <div class="col-xl col-lg-2 col-md">
+                    <div class="basket-header__delete">Remove</div>
+                </div>
+            </div>
+            <div class="basket-body">
 
             </div>
+
+            <template id="basketrow">
+                <div class="basket-item row template">
+                    <div class="col-lg-2 col-md-3">
+                        <div class="basket-item__preview"><img src="{% static '/images/defoult.jpg'%}" alt=""></div>
+                    </div>
+                    <div class="col-xl col-md-3">
+                        <div class="basket-item__info">
+                            <div class="basket-item__name">Product</div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md">
+                        <div class="basket-item__count">
+                            <div class="count-current">
+                                <button class="count-current__button add-from-basket" data-type="minus"
+                                        data-field="count"
+                                        type="button">-
+                                </button>
+                                <input readonly class="count-current__value" name="count" type="text" value="1" data-min="1"
+                                       data-max="1" onkeypress="validate(event)">
+                                <button class="count-current__button add-from-basket" data-type="plus"
+                                        data-field="count"
+                                        type="button">+
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md">
+                        <div class="basket-item__summ">
+                            <span>€</span>
+                            <span class="subtotal">0</span>
+
+                        </div>
+                    </div>
+                    <div class="col-xl col-lg-2 col-md">
+                        <div class="basket-item__delete"><a class="del-btn">
+                            <svg class="icon icon-delete icon--brand">
+                                <use xlink:href="{% static 'images/sprite.svg' %}#icon-delete"></use>
+                            </svg>
+                        </a></div>
+                    </div>
+                </div>
+            </template>
+
+            <div class="basket-footer">
+                <div class="row">
+                    <div class="offset-md-5"></div>
+                    <div class="col-lg-2 col-md-3 order-2 order-md-1 pt-2 pt-md-1">
+                        <button class="button button--basket" type="submit">
+                            Proceed to checkout
+                        </button>
+                    </div>
+                    <div class="col-md-4 offset-lg-1 order-1 order-md-2">
+                        <div class="basket-summ">
+                            <span>Subtotal: €</span>
+                            <span class="total">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </div>

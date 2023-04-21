@@ -18,16 +18,28 @@ from django.urls import path, include
 from measure.views import MeasuresList
 from django.conf.urls.static import static
 from django.conf import settings
-from product.views import ProductListView, SectionListVies
+from product.views import SectionListViews, ProductAPIViewSet
 from .static_pages import static_page
 from basket.basket import basket
+from rest_framework import routers
+
+
+
 
 urlpatterns = [
-    path('', SectionListVies.as_view(), name='home'),
+
+    path('', SectionListViews.as_view(), name='home'),
     path('admin/', admin.site.urls),
     path("measures/", MeasuresList.as_view()),
+
+
+    path("api/v1/product/", ProductAPIViewSet.as_view({'get': 'list'})),
+    path("api/v1/product/<slug:slug>/", ProductAPIViewSet.as_view({"put": "update", "get":'retrieve',"delete":"destroy"})),
+
+
     path("catalog/", include('product.urls')),
-    path("basket/", static_page("Cart", "basket/basket.html"), name="basket")
+    path("basket/", static_page("Cart", "basket/basket.html"), name="basket"),
+
 ]
 
 ## Статические страницы

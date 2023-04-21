@@ -6,7 +6,12 @@ from .models import Section, SubSection, ProductImage,Product
 from mixins.mixins import MenuMixin
 from .logic import get_subsection, get_sections, get_section, get_subsections, get_products, get_product
 from django.http import Http404
+from rest_framework import generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.viewsets import  ModelViewSet
 
+from .serializers import ProductSerializer
 class ProductListView(MenuMixin, ListView):
     model = Product
 
@@ -63,7 +68,7 @@ class ProductListView(MenuMixin, ListView):
         return context
 
 
-class SectionListVies(MenuMixin, ListView):
+class SectionListViews(MenuMixin, ListView):
     model = Section
 
     def get_queryset(self):
@@ -94,3 +99,11 @@ class ProductDetailView(MenuMixin, DetailView):
         context['gallery'] += list(map(lambda product: product.image, list(ProductImage.objects.filter(product__slug=product.slug))))  # все связанные фото
 
         return context
+
+
+
+
+class ProductAPIViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = "slug"

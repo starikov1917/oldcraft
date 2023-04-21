@@ -68,7 +68,7 @@
                             <button class="count-current__button btn-number product-item-amount-field-btn-disabled"
                                     data-type="minus"  type="button">-
                             </button>
-                            <input class="count-current__value" name="count" type="text"
+                            <input readonly class="count-current__value" name="count" type="text"
                                    value="1" data-min="1" data-max="{{ object.availableQuantity }}"
                                    onkeypress="validate(event)"
                                    autocomplete="off">
@@ -78,15 +78,15 @@
                         <div class="section-card-count__name">pcs.</div>
                     </div>
                     <div class="mb-3 mb-md-4">
-                        <div class="basket-summ mb-1">Total: <span
-                                id="bx_117848907_573_price_total">€{{ object.price }}</span></div>
+                        <div class="basket-summ mb-1">Total: €<span
+                                id="sub-total" data-price="{{ object.price }}">{{ object.price }}</span></div>
                     </div>
                     <div style="display: none; font-size: 27px;" id="bx_117848907_573_price">€149</div>
                 </div>
             </div>
             <div class="offset-lg-7 col-lg">
                 <div class="row">
-                    <div class="col-lg-5 col-md-4" id="bx_117848907_573_basket_actions" style="display: ;">
+                    <div class="col-lg-5 col-md-4"  style="display: block;">
                         <button class="button button--card h-50 add_from_card"data-slug="{{object.slug}}" data-price="{{object.price}}" data-max="{{object.availableQuantity}}">Add to cart
                         </button>
                     </div>
