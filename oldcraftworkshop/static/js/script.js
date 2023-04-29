@@ -246,9 +246,7 @@ function validate(evt) {
   }
 }
 
-setTimeout(function() {
-  document.querySelectorAll('.input__control , .merki-item__input input').forEach(element => element.setAttribute('value', ""));
-},100);
+
 
 $(document).mouseup(function(e) {
 

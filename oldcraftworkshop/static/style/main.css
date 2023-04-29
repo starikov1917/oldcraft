@@ -2533,3 +2533,15 @@ margin-bottom:0;
         height: 62px;
     }
 }
+.hide-option{
+  display: none;
+}
+
+.show-option {
+  display: block;
+}
+.option {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+}

@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content pt-2 pt-lg-0">
+    <div class="container-fluid">
+        <h1 class="title title--oformlenie text-left mb-4 mb-md-5 mb-lg-3">Оформление заказа</h1>
+        <form method="post" name="oformlenie" class="checkout">
+            {% csrf_token %}
+            <div class="section-delivery">
+                <h2 class="sub-title sub-title--oformlenie mb-4 mb-md-5">Delivery options</h2>
+                <div class="col-lg-12 mb-2" style="">
+
+                    <label class="input">
+                        <input class="input__control required" id="location-filter" placeholder="Country" name="location"/>
+                        <div class="input__message">Email isn't correct</div>
+                    </label>
+                    <div class="col-lg-12 mb-2" id="location-selector"
+                         style="position:absolute; background-color: #ffffff;  z-index: 10; margin-top:2px;">
+                        <div id="loc-list">
+                            <template id="loc-template">
+                                <div class="option"></div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-4 mb-2 radio__label">Order weight:</div>
+                        <div class="col-lg-1 col-md-2 col-sm-3 col-3 mb-2">
+                            <label class="input">
+                                <input readonly class="input__control required float-right" type="text" value="0"
+                                       id="weight"/>
+                                <div class="input__message"></div>
+                            </label>
+                        </div>
+                        <div class="col-1">g</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-4 mb-2 radio__label">Subtotal:</div>
+                        <div class="col-lg-1 col-md-2 col-sm-3 col-3 mb-2">
+                            <label class="input">
+                                <input readonly class="input__control required" type="text" value="0"
+                                       id="subtotal"/>
+                                <div class="input__message"></div>
+                            </label>
+                        </div>
+                        <div class="col-1">€</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-4 mb-2 radio__label">Shipping cost:</div>
+                        <div class="col-lg-1 col-md-2 col-sm-3 col-3 mb-2">
+                            <label class="input">
+                                <input readonly class="input__control required" type="text" value="0"
+                                       id="shippingCost"/>
+                                <div class="input__message"></div>
+                            </label>
+                        </div>
+                        <div class="col-1">€</div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-sm-6 col-4 mb-2 radio__label">Total cost:</div>
+                        <div class="col-lg-1 col-md-2 col-sm-3 col-3 mb-2">
+                            <label class="input">
+                                <input readonly class="input__control required" type="text" value="0"
+                                       id="totalCost"/>
+                                <div class="input__message"></div>
+                            </label>
+
+                        </div>
+                        <div class="col-1">€</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-4 mb-2">
+                    <label class="input">
+                        <input class="input__control required" type="email" placeholder="E-mail" name="email"/>
+                        <div class="input__message">Email isn't correct</div>
+                    </label>
+                </div>
+                <div class="col-lg-2 col-md-4 ">
+                    <button class="button button--basket">Confirm e-mail address</button>
+                </div>
+            </div>
+            <script>initCheckout()</script>
+
+
+            {% if request.user.is_authenticated %}
+            <div class="checkout-body">
+                <div class="section-delivery mb-5 mb-md-5 section-delivery--payment">
+                    <h2 class="sub-title sub-title--oformlenie mb-4 mb-md-4">Payment method</h2>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-lg-2 col-md-4 col-12">
+                                    <label class="radio">
+                                        <input type="radio" name="type-buy-1" value="paypal" checked="checked"/>
+                                        <div class="radio__control"></div>
+                                        <div class="radio__label">PayPal</div>
+                                    </label>
+                                </div>
+                                <div class="col-md col-lg-6">
+                                    <div class="content__big">
+                                        <p class="mb-0">You will get an invoice</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-delivery">
+                    <h2 class="sub-title sub-title--oformlenie mb-4 mb-md-4">Shipping address</h2>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="City" name="city"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Post code" name="index"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-8">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Address line"
+                                       name="street" onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                --------------------------------------------------------------------------------------------------
+
+                <div class="tabs-body tabs-body--active" id="tabs-1">
+                    <div class="row">
+                        <div class="col">
+                            <div class="delivery-radio">
+                                <label class="radio delivery-radio--radio">
+                                    <input type="radio" name="type-delivery-2" value="Почта России" checked="checked">
+                                    <div class="radio__control"></div>
+                                    <div class="radio__label">Почта России</div>
+                                </label>
+                                <div class="delivery-radio__term">4-8 недель</div>
+                                <div class="delivery-radio__price">57
+                                    000&nbsp;₽<span>≈$786,60 <span>или €659,05</span></span></div>
+                            </div>
+                            <div class="delivery-radio">
+                                <label class="radio delivery-radio--radio">
+                                    <input type="radio" name="type-delivery-2" value="EMS почта">
+                                    <div class="radio__control"></div>
+                                    <div class="radio__label">EMS почта</div>
+                                </label>
+                                <div class="delivery-radio__term">1-2 недели</div>
+                                <div class="delivery-radio__price">97
+                                    000&nbsp;₽<span>≈$1286,60 <span>или €1089,45</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="section-delivery">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control required" type="text" placeholder="Фамилия и Имя" value=""
+                                       name="name" onkeyup="this.setAttribute('value', this.value);"/>
+                                <div class="input__message">Вы не заполнили обязательное поле</div>
+                            </label>
+                        </div>
+
+                        <div class="col-lg-3 col-md-4">
+                            <label class="input">
+                                <input class="input__control required" type="tel" placeholder="Номер телефона"
+                                       name="phone"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                                <div class="input__message">Вы не заполнили обязательное поле</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-delivery">
+                    <h2 class="sub-title sub-title--oformlenie mb-4 mb-md-3">Варианты доставки</h2>
+                    <div class="tabs">
+                        <div class="tabs-header mb-1 mb-md-5">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-5 col-12 mb-1 mb-md-0">
+                                    <div class="tabs-item button button--plain button--tabs" data-tab="tabs-1"><img
+                                            src="images/emojione_flag-for-russia.svg" alt=""/><span>по России</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-5 col-12 mb-2 mb-md-0">
+                                    <div class="tabs-item button button--tabs" data-tab="tabs-2"><img
+                                            src="images/worldwide.svg" alt=""/><span>Международная</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs-body" id="tabs-1">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="delivery-radio">
+                                        <label class="radio delivery-radio--radio">
+                                            <input type="radio" name="type-delivery-2" value="Почта России"
+                                                   checked="checked"/>
+                                            <div class="radio__control"></div>
+                                            <div class="radio__label">Почта России</div>
+                                        </label>
+                                        <div class="delivery-radio__term">4-8 недель</div>
+                                        <div class="delivery-radio__price">57
+                                            000 ₽<span>≈$786,60 <span>или €659,05</span></span></div>
+                                    </div>
+                                    <div class="delivery-radio">
+                                        <label class="radio delivery-radio--radio">
+                                            <input type="radio" name="type-delivery-2" value="EMS почта"/>
+                                            <div class="radio__control"></div>
+                                            <div class="radio__label">EMS почта</div>
+                                        </label>
+                                        <div class="delivery-radio__term">1-2 недели</div>
+                                        <div class="delivery-radio__price">97
+                                            000 ₽<span>≈$1286,60 <span>или €1089,45</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tabs-body tabs-body--active" id="tabs-2">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-7 mb-3 mb-lg-0">
+                                    <label class="select select--delivery">
+
+                                        <select class="select__control">
+                                            <option value="Страна доставки" selected="selected" disabled="disabled">
+                                                Страна
+                                                доставки
+                                            </option>
+                                            <option value="США">США</option>
+                                            <option value="Германия">Германия</option>
+                                            <option value="Франция">Франция</option>
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="col">
+                                    <div class="delivery-radio">
+                                        <label class="radio delivery-radio--radio">
+                                            <input type="radio" name="type-delivery-1" value="Почта России"
+                                                   checked="checked"/>
+                                            <div class="radio__control"></div>
+                                            <div class="radio__label">Почта России</div>
+                                        </label>
+                                        <div class="delivery-radio__term">4-8 недель</div>
+                                        <div class="delivery-radio__price">57
+                                            000 ₽<span>≈$786,60 <span>или €659,05</span></span></div>
+                                    </div>
+                                    <div class="delivery-radio">
+                                        <label class="radio delivery-radio--radio">
+                                            <input type="radio" name="type-delivery-1" value="EMS почта"/>
+                                            <div class="radio__control"></div>
+                                            <div class="radio__label">EMS почта</div>
+                                        </label>
+                                        <div class="delivery-radio__term">1-2 недели</div>
+                                        <div class="delivery-radio__price">97
+                                            000 ₽<span>≈$1286,60 <span>или €1089,45                                 </span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-delivery">
+                    <h2 class="sub-title sub-title--oformlenie mb-4 mb-md-4">Адрес</h2>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Город" name="city"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Индекс" name="index"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                        <div class="col-lg-3 col-md-4 mb-2">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Область/регион/штат"
+                                       name="region"
+                                       onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                        <div class="col-lg-6 col-md-8">
+                            <label class="input">
+                                <input class="input__control" type="text" placeholder="Улица, дом, корпус, квартира"
+                                       name="street" onkeyup="this.setAttribute('value', this.value);"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row align-items-start oformlenie-footer pt-1 pt-md-0">
+                    <div class="col-lg-2 col-md-4 offset-lg-5 offset-md-4 order-2 order-md-1">
+                        <button class="button button--basket">Разместить заказ</button>
+                    </div>
+                    <div class="col-md offset-lg-2 order-1 order-md-2 mb-3 mb-md-0">
+                        <div class="basket-summ">Итого: 57 000 ₽</div>
+                        <div class="basket-currency">≈$786,60 или €659,05</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </form>
+
+
+    </div>
+</div>
+
+{% endblock content %}

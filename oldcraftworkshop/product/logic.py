@@ -16,11 +16,11 @@ def get_section(section_slug: str):
 
 def get_products(**kwargs):
     if "subsection_slug" in kwargs:
-        return Product.objects.filter(subsection__slug=kwargs["subsection_slug"])
+        return Product.objects.filter(subsection__slug=kwargs["subsection_slug"]).select_related("titlePhoto")
     elif "section_slug" in kwargs:
-        return Product.objects.filter(section__slug=kwargs["section_slug"])
+        return Product.objects.filter(section__slug=kwargs["section_slug"]).select_related("titlePhoto")
     else:
-        return Product.objects.all()
+        return Product.objects.all().select_related("titlePhoto")
 
 def get_product(slug: str):
     return get_object_or_404(Product, slug=slug)

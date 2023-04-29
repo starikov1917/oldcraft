@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     "material",
     "measure",
     'production',
-    "rest_framework"
+    "rest_framework",
+
+    "debug_toolbar",
 ]
 
 
@@ -60,6 +62,7 @@ MENU = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -155,3 +158,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CART_SESSION_ID = 'cart'
+
+INTERNAL_IPS = ["127.0.0.1"]

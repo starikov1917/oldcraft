@@ -10,3 +10,6 @@ class MenuMixin():
 
     def get_available_sections(self):
         return get_sections()
+
+    def __init__(self):
+        available_sections = get_sections()

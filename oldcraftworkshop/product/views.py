@@ -10,6 +10,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import  ModelViewSet
+import json
 
 from .serializers import ProductSerializer
 class ProductListView(MenuMixin, ListView):
@@ -29,42 +30,51 @@ class ProductListView(MenuMixin, ListView):
         context["title"] = 'Catalog'
         catalog_navigation = []
         pushed_subsection_slug = str()
+        available_sections = get_sections()
 
         if "subsection_slug" in self.kwargs:
-
-            subsection = get_subsection(self.kwargs['subsection_slug'])
-            context["title"] = subsection.title
-            pushed_subsection_slug = subsection.slug
-            if subsection.section.slug != self.kwargs['section_slug']:
-                raise Http404(
-                    "Wrong subsection or section slug"
-                )
-
-
-        if "section_slug" in self.kwargs:
             neigbors = get_subsections(self.kwargs['section_slug'])
-            section = get_section(self.kwargs['section_slug'])
-            context["title"] = section.title
-            catalog_navigation = [{"title":"Back",
-                                   "url": reverse("catalog"),
-                                   "is_pushed": False}]
+            pushed_subsection_slug = self.kwargs['subsection_slug']
+            l =  list(neigbors)
+            temp_subsection = list(filter(lambda subsection: subsection.slug == pushed_subsection_slug, l)).pop()
+
+            context["title"] = temp_subsection.title
+            catalog_navigation = [{
+                "title": "Back",
+                "url": reverse("section", kwargs={"section_slug": self.kwargs['section_slug']}),
+                "is_pushed": False}
+            ]
             catalog_navigation +=  list(map(lambda subsection: {"title":subsection.title,
-                                                                "url":subsection.get_absolute_url(),
-                                                                "is_pushed": pushed_subsection_slug == subsection.slug},
-                                            neigbors))
-        else:
-            catalog_navigation = [{"title":"All products",
-                                   "url": "",
-                                   "is_pushed": True}]
-            neigbors = Section.objects.all()
+                                                                    "url":subsection.get_absolute_url(),
+                                                                    "is_pushed": pushed_subsection_slug == subsection.slug},
+                                                neigbors))
+        elif "section_slug" in self.kwargs:
+            neigbors = get_subsections(self.kwargs['section_slug'])
+            l = list(neigbors)
+            temp_section = list(filter(lambda s: s.slug == self.kwargs['section_slug'], list(available_sections))).pop()
+            context["title"] = temp_section.title
+            catalog_navigation = [{
+                "title": "All products",
+                "url": reverse("catalog"),
+                "is_pushed": False}
+            ]
             catalog_navigation += list(map(lambda section: {"title": section.title,
                                                                "url": section.get_absolute_url(),
                                                                "is_pushed": False},
                                            neigbors))
-
+        else:
+            catalog_navigation = [{"title":"All products",
+                                       "url": "",
+                                       "is_pushed": True}]
+            neigbors = list(available_sections)
+            catalog_navigation += list(map(lambda section: {"title": section.title,
+                                                               "url": section.get_absolute_url(),
+                                                               "is_pushed": False},
+                                           neigbors))
+        context["sections"] = available_sections
         context["catalog_navigation"] = catalog_navigation
         context["menu"] = self.get_menu()
-        context["sections"] = self.get_available_sections()
+
         return context
 
 
@@ -107,3 +117,33 @@ class ProductAPIViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = "slug"
+
+class GetCartWeight(APIView):
+    def post(self, request):
+        print("----------", request.data)
+        if "cart" in request.data and request.data["cart"]:
+            print("----------", request.data["cart"])
+            cart = json.loads(request.data["cart"])
+            slugs = list(cart.keys())
+            products = Product.objects.filter(slug__in=slugs).values("pk", "slug", "weight", "price")
+            subtotal = 0
+            total_weight = 0
+            for product in list(products):
+                quantity = int(cart[product["slug"]]["quantity"])
+                subtotal += quantity * float(product["price"])
+                total_weight += quantity * product["weight"]
+
+            if total_weight > 0:
+                return Response({"weight":total_weight, "subtotal":subtotal})
+            else:
+                resp = Response({"error": "cart is empty"})
+                resp.status_code = 400
+                return resp
+
+        else:
+            resp = Response({"error":"cart isn't found"})
+            resp.status_code = 400
+
+            return  resp
+
+        # return Response({"weight": 156})

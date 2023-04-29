@@ -1,6 +1,6 @@
 
-
 var CART_KEY = "cart3"
+var base_url = 'http://localhost:8000/'
 
 
 function is_in_cart(carti, slug) {
@@ -8,46 +8,54 @@ function is_in_cart(carti, slug) {
 }
 
 function increment_basket_counter(){
-    basket =  $(".basket-value")
-    old_value = parseInt(basket.text())
-
-    render_basket_value(old_value + 1)
+    element = document.querySelector(".basket-value")    
+    old_value = parseInt(element.innerHTML)
+    element.innerHTML = old_value + 1
 }
 
 function decrement_basket_counter(){
-    basket =  $(".basket-value")
-    old_value = parseInt(basket.text())
-    render_basket_value(old_value - 1)
+    element = document.querySelector(".basket-value")    
+    old_value = parseInt(element.innerHTML)
+    element.innerHTML = old_value - 1
 }
 
 
-$(document).on("click" , ".add_from_catalog", function() {
-    var max = $(this).attr('data-max')
-
-    var price = $(this).attr('data-price')
-    var slug =  $(this).attr('data-slug')
 
 
-    var title = $("#" + slug).text()
+function init_catalog_listeners(){
+    document.querySelectorAll(".add_from_catalog").forEach(element => element.addEventListener("click", () => {
+        const max = element.getAttribute('data-max')
+        const price = element.getAttribute('data-price')
+        const slug = element.getAttribute('data-slug')
+        const title = document.querySelector(`#${slug}`).innerHTML
+        add_to_cart(slug, price, 1, max, title)   
+    }))
+    document.querySelector(".modal-added-item").addEventListener("click", ()=> document.querySelector(".modal-added-item").classList.add("hiden"))
+}
 
 
-    add_to_cart(slug, price, 1, max, title)
-
-})
-
-
-
-$(document).on("click" , ".add_from_card", function() {
-    var max = $(this).attr('data-max')
-    var price = $(this).attr('data-price')
-    var slug =  $(this).attr('data-slug')
-    var quantity = $(".count-current__value").val()
-    var title = $(".title ").text()
-    console.log(title)
-    add_to_cart(slug, price, Number(quantity), max, title)
-})
+function init_card_listeners(){
+    document.querySelectorAll(".add_from_card").forEach(element => {
+        element.addEventListener("click", ()=>{
+            const max = element.getAttribute('data-max')
+            const price = element.getAttribute("data-price")
+            const slug = element.getAttribute('data-slug')
+            const quantity = parseInt(document.querySelector(".count-current__value").value)
+            const title = document.querySelector(".title").innerHTML
+            add_to_cart(slug, price, Number(quantity), max, title)
+        })        
+    })
+}
 
 
+function showAdds(){
+    if (sessionStorage.getItem("addsShowed") == 'true'){
+
+    } else {
+        document.querySelector(".modal-added-item").classList.remove("hiden")
+        sessionStorage.setItem("addsShowed", true)
+    }
+}
 
 
 
@@ -55,23 +63,24 @@ $(document).on("click" , ".add_from_card", function() {
 
 function Get_cart_len() {
     cart3 = JSON.parse(localStorage.getItem(CART_KEY))
-
     return cart3?Object.keys(JSON.parse(localStorage.getItem(CART_KEY))).length:0
 }
 
 function added_to_cart_notification(text, description){
-    $(".modal-added-item").removeClass("hiden")
-    $(".status-text").text(text)
-    $(".status-desc").text(description)
+    if (a = document.querySelector(".modal-added-item")) {
+        a.classList.remove("hiden")    
+        document.querySelector(".status-text").innerHTML = text
+        document.querySelector(".status-desc").innerHTML = description
+    } else { console.log("мы не в каталоге")}
 }
 
 function render_basket_value(value){
-    $(".basket-value").text(value)
+    document.querySelector(".basket-value").innerHTML = value
 }
 
 function render_empty_cart() {
-        body = $(".basket")
-        body.replaceWith("<p>Your cart is empty</p>")
+        document.querySelector(".basket").classList.add("hiden")
+        document.querySelector("#empty-basket-label").classList.remove("hiden")
 }
 
 
@@ -79,19 +88,19 @@ function delete_from_cart(product_slug) {
     cart3 = JSON.parse(localStorage.getItem(CART_KEY))
     if (cart3) {
         delete cart3[product_slug]
-        element_for_deleting = $("#" + product_slug)
-        element_for_deleting.attr("id", "")
-        element_for_deleting.addClass("hiden")
-        var price = $('#' + product_slug + "-subtotal")
-        render_total_cost(-1 * parseFloat(price[0].textContent), true)
-        if (!(cart3) || (Object.keys(cart3).length === 0 && cart3.constructor === Object))  {
-            $(".basket").addClass("hiden")
-            $("#empty-basket-label").removeClass("hiden")
-
-        }
+        const element_for_deleting = document.querySelector(`#${product_slug}`)                
+        element_for_deleting.setAttribute("id", "")
+        element_for_deleting.classList.add("hiden")
+    
+        const price = document.querySelector(`#${product_slug}-subtotal`)
         setTimeout(function(){
             element_for_deleting.remove()
         }, 250)
+
+        render_total_cost(-1 * parseFloat(price.innerHTML), true)
+        if (!(cart3) || (Object.keys(cart3).length === 0 && cart3.constructor === Object))  {        
+            setTimeout(function(){render_empty_cart()},250)
+        }
     }
     localStorage.setItem(CART_KEY, JSON.stringify(cart3))
     decrement_basket_counter()
@@ -101,218 +110,314 @@ function delete_from_cart(product_slug) {
 
 
 
-function add_to_cart(product_id, price, quantity, max, product_title){
+function add_to_cart(product_slug, price, quantity, max, product_title){
     cart3 = JSON.parse(localStorage.getItem(CART_KEY))
     if (cart3 == null){
         cart3 = {}
     }
-    if (is_in_cart(cart3, product_id))  {
-        if (cart3[product_id]["quantity"] + quantity > max){
-            cart3[product_id]["quantity"] = max
-            added_to_cart_notification(product_title, "The maximum available quantity has been added to the cart")
-        } else if (cart3[product_id]["quantity"] + quantity < 1) {
+    if (product_slug in cart3) {
 
-        }else{
-            cart3[product_id]["quantity"] += quantity
+        if (cart3[product_slug]["quantity"] + quantity > max){
+            cart3[product_slug]["quantity"] = max
+            added_to_cart_notification(product_title, "The maximum available quantity has been added to the cart")
+        } else if (cart3[product_slug]["quantity"] + quantity < 1) {
+            cart3[product_slug]["quantity"] = 1
+        } else {
+            cart3[product_slug]["quantity"] += quantity
             added_to_cart_notification(product_title, "Item added to cart")
         }
 
-        } else {
+    } else {
         if (quantity > 0) {
-            cart3[product_id] = {}
-            cart3[product_id]["quantity"] = quantity
-            cart3[product_id]["price"] = price
+            cart3[product_slug] = {}
+            cart3[product_slug]["quantity"] = quantity
+            cart3[product_slug]["price"] = price
             added_to_cart_notification(product_title)
             increment_basket_counter()
 
 
         }
     }
-
     localStorage.setItem(CART_KEY, JSON.stringify(cart3))
 }
 
 
 
 
-
-function get_product_by_slug(slug){
-
-
-
-
-
-
-
-
-    if (slug == "tunic2") {
-    return {"slug": "tunic2",
-            "title": "Туника тестовая 2",
-            "availableQuantity": 456,
-            "titlePhoto": "https://oldcraftworkshop.com/upload/iblock/65c/hrqvw8ai34dca4yovn9xylcbq4uwmrbu.jpg",
-            "price": 152.00,}
-
-    } else if (slug == "legwraps1") {
-    return {"slug": "legwraps1",
-            "title": "Обмотки на ноги 1",
-            "availableQuantity": 2,
-            "titlePhoto": "https://oldcraftworkshop.com/upload/iblock/65c/hrqvw8ai34dca4yovn9xylcbq4uwmrbu.jpg",
-            "price": 49,
-
-    }
-    } else if (slug == "tunic3"){
-
-    return {"slug": "tunic3",
-            "title": "Туника 3",
-            "availableQuantity": 3,
-            "titlePhoto": "https://oldcraftworkshop.com/upload/iblock/65c/hrqvw8ai34dca4yovn9xylcbq4uwmrbu.jpg",
-            "price": 123,
-
-    }
-    }
-}
-
 function render_total_cost(value, update_mode){
-    if (update_mode) {
-        console.log("сколько прибавить",value)
-        temp_value = parseFloat($(".total").text()) + value
-        $(".total").text(temp_value.toFixed(2))
-
-    } else {
-        $(".total").text(value.toFixed(2))
-    }
+    const element = document.querySelector(".total")
+    const new_value = value + (update_mode?parseFloat(element.innerHTML):0) 
+    element.innerHTML = new_value.toFixed(2)
 }
+
 
 
 function renderCart(){
-
     cart = JSON.parse(localStorage.getItem(CART_KEY))
-    var basket_body = document.querySelector(".basket-body");
-    var template = document.querySelector('#basketrow');
+    const basket_body = document.querySelector(".basket-body");
+    const template = document.querySelector('#basketrow');
     var total_cost = 0
     if (!(cart) || (Object.keys(cart).length === 0 && cart.constructor === Object))  {
         render_empty_cart()
     } else {
-        for (slug in cart) {
-
-
-
-            var clone = template.content.cloneNode(true);
-            var row = clone.querySelectorAll(".basket-item")
-            row[0].setAttribute("id", slug)
-            var del_button = clone.querySelectorAll(".del-btn")
-            del_button[0].setAttribute("data-slug", slug)
-            var title = clone.querySelectorAll(".basket-item__name")
-            title[0].setAttribute("id", slug)
-            var quantity = clone.querySelectorAll(".count-current__value")
-            quantity[0].value = cart[slug]['quantity']
-            quantity[0].setAttribute("data-slug", slug)
-
-            quantity[0].setAttribute("id", slug)
-
-            var image = clone.querySelectorAll("img")
-            image[0].setAttribute("id", slug + "-img")
-
-            var price = clone.querySelectorAll(".subtotal")
-            price[0].setAttribute("id", slug + "-subtotal")
-
-
-
-
-
-            $.ajax({
-            url: 'http://localhost:8000/api/v1/product/' + slug + "/",
-            type: 'get',
-            success: function(response){
-
-                var title = $("#" + response.slug + " .basket-item__name")
-                console.log(response)
-                title[0].textContent = response.title
-
-
-
-                var image = $("#" + response.slug + "-img")
-
-                var price = $('#' + response.slug + "-subtotal")
-
-
-                // тут запросить по АПИ настоящее изображение
-                //image.attr("src", response.titlePhoto)
-
-                var quantity_input = $("#" + response.slug + " .count-current__value")
-                quantity_input[0].setAttribute("data-max", response.availableQuantity)
-                quantity_input[0].setAttribute("data-price", response.price)
-
-
-
-                if (quantity_input[0].value > response.availableQuantity)    {
-                    quantity_input[0].value = response.availableQuantity
-                }
-
-                sub_sum = response.price * quantity_input[0].value
-                price[0].textContent = sub_sum.toFixed(2)
-                render_total_cost(sub_sum, true)
-
-                if (response.availableQuantity == 0) {
-                    var temp_row = $(".basket-item #" + response.slug)
-                    delete_from_cart(response.slug)
-                }
-
-
-
-
-
-            }
-            })
-
+        for (slug in cart) {            
+            const clone = template.content.cloneNode(true);
+            const row = clone.querySelector(".basket-item")
+            row.setAttribute("id", slug)
+            const del_button = clone.querySelector(".del-btn")
+            del_button.setAttribute("data-slug", slug)
+            const temp = slug
+            const title = clone.querySelector(".basket-item__name")
+            title.setAttribute("id", `${slug}-title`)
+            const quantity = clone.querySelector(".count-current__value")
+            quantity.value = cart[slug]['quantity']
+            quantity.setAttribute("data-slug", slug)
+            quantity.setAttribute("id", `${slug}-quantity`)
+            const image = clone.querySelector("img")
+            image.setAttribute("id", `${slug}-img`)
+            const price = clone.querySelector(".subtotal")
+            price.setAttribute("id", `${slug}-subtotal`)
+            
+            fetch(`${base_url}api/v1/product/${slug}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const temp_slug = data.slug
+                    const title = document.querySelector(`#${temp_slug}-title`)
+                    title.textContent = data.title
+                    document.querySelector(`#${temp_slug}-img`).setAttribute('src', data.titlePhoto.image)  
+                    const quantity_input = document.querySelector(`#${temp_slug}-quantity`)
+                    quantity_input.setAttribute("data-max", data.availableQuantity)
+                    quantity_input.setAttribute("data-price", data.price)
+                    if (quantity_input.value > data.availableQuantity)    {
+                        quantity_input.value = data.availableQuantity
+                    }
+                    const price = document.querySelector(`#${temp_slug}-subtotal`)
+                    const sub_sum = data.price * quantity_input.value
+                    price.textContent = sub_sum.toFixed(2)
+                    render_total_cost(sub_sum, true)
+                    if (data.availableQuantity == 0) {
+                        delete_from_cart(temp_slug)
+                    }
+                })
             basket_body.appendChild(clone)
         }
+
+        document.querySelectorAll(".del-btn")
+            .forEach(x => x.addEventListener("click", () => {        
+                delete_from_cart(x.getAttribute("data-slug"))
+
+            }))        
         render_total_cost(total_cost, false)
     }
+
+    console.log(document.querySelectorAll(".add-from-basket"))
+    // добавляем ивент-лисенеры
+    document.querySelectorAll(".add-from-basket").forEach(button => {
+        button.addEventListener("click" , function() {
+            const type = button.getAttribute('data-type');
+            const input = button.closest('.count-current').querySelector("input");        
+            const max = input.getAttribute('data-max');            
+            const price = input.getAttribute('data-price')
+            const slug =  input.getAttribute('data-slug')
+            const value = parseInt(input.value);
+            var new_val = 0
+            var quantity
+            if (type == 'plus'){
+                  new_val = Math.min(value + 1, parseInt(max))
+                  input.value = new_val
+                  quantity = 1
+            }
+
+            if (type == 'minus'){
+                  new_val = Math.min(Math.max(1, value - 1))
+                  input.value = new_val
+                  quantity = -1
+            }
+            if (new_val != value) {
+                  const sub_sum = document.querySelector(`#${slug}-subtotal`)                                             
+                  sub_sum.innerHTML = (parseFloat(sub_sum.innerHTML) + quantity *  parseFloat(price)).toFixed(2)
+                  render_total_cost(quantity * parseFloat(price), true)
+            }
+            add_to_cart(slug, price, quantity, parseInt(max), "product_title")
+        
+        })
+    })
+}
+
+
+function calculateShippingCost(){
+    if (localStorage.getItem("chosen-location") && localStorage.getItem("weight"))  {
+        const location = JSON.parse(localStorage.getItem(localStorage.getItem("chosen-location")))        
+        const weight = localStorage.getItem("weight")
+        console.log("calculate shipping cost: ", location.gpostCode, weight)
+        fetch(`${base_url}api/v1/shippingCost/`, {
+            
+            headers: {
+                'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+                "Content-Type": "application/json",
+            },
+            
+            body: JSON.stringify({
+                weight: weight,
+                gpostCode: location.gpostCode
+            }),
+            method:"POST",
+        })      
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                }
+
+            }) 
+            .then(data =>{
+                localStorage.setItem("shippingCost", data.shippingCost)
+                document.getElementById("shippingCost").value = data.shippingCost
+                const subtotal = parseFloat(localStorage.getItem("subtotal"))
+                const shippingCost = parseFloat(data.shippingCost)
+                document.getElementById("totalCost").value = subtotal + shippingCost
+            })
+    }
+
+
 
 }
 
 
 
+function  render_empty_checkout(){
 
-$(document).on("click" , ".del-btn", function() {
-    delete_from_cart($(this).attr("data-slug"))
-})
+        document.querySelector(".checkout").classList.add("hiden")
+        document.querySelector(".").classList.add("hiden")
+
+}
+//инициализируем чекаут
+
+function initCheckout(){
+    const loc = document.getElementById("location-filter")
+    const slctr = document.getElementById("location-selector")
+    const cart = localStorage.getItem(CART_KEY)
+    if (!(cart) || (Object.keys(cart).length === 0 && cart.constructor === Object))  {
+        render_empty_checkout()
+    } else {
+
+
+        
+        
+
+        fetch(`${base_url}api/v1/location/`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }            
+            })
+            .then(data => {
+                console.log(data)
+                const locationsWrapper = document.getElementById("loc-list")
+                loc_option_template = document.getElementById("loc-template")
+                data.forEach((loc) => {
+                    const clone = loc_option_template.content.cloneNode(true)
+                    const option = clone.querySelector(".option")
+                    option.textContent = loc.title
+                    locationsWrapper.appendChild(clone)
+                    localStorage.setItem(loc.title, JSON.stringify(loc))                
+                    console.log(loc.synonims)
+                    option.addEventListener("click", (event)=> {            
+                        localStorage.setItem("chosen-location", event.target.textContent)
+                        loc.value = event.target.textContent
+                        slctr.classList.add("hide-option")
+                        slctr.classList.remove("show-option")
+                        calculateShippingCost()
+                        console.log("click")
+                    })
+                })
+            })
+
+                
+        if (localStorage.getItem("chosen-location")){ 
+            loc.value = localStorage.getItem("chosen-location")
+            calculateShippingCost()
+        }
+
+        const cart = {cart: localStorage.getItem(CART_KEY)}
+
+        fetch(`${base_url}api/v1/cartWeight/`, {
+            
+            headers: {
+                'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+                "Content-Type": "application/json",
+            },
+            
+            body: JSON.stringify(cart),
+            method:"POST",
+        })      
+            .then(response =>  {
+                if (response.ok) {
+                    return response.json()
+                }
+
+            })        
+            .then(data => {
+                localStorage.setItem("weight", data.weight)
+                localStorage.setItem("subtotal", data.subtotal)
+                console.log(data.weight)
+                document.getElementById("weight").value = data.weight
+                document.getElementById("subtotal").value = data.subtotal
+
+        })
 
 
 
-$(document).on("click" , ".add-from-basket", function(element) {
-      var type = $(this).attr('data-type');
-      var input = $(this).closest('.count-current').find('input');
-      var min = input.attr('data-min');
-      var max = input.attr('data-max');
+        
 
-      var price = input.attr('data-price')
-      var slug =  input.attr('data-slug')
-      var value = parseInt(input.val());
-      var new_val = 0
-      var quantity
-      if (type == 'plus'){
-            new_val = Math.min(value + 1, parseInt(max))
-            input.val(new_val)
-            quantity = 1
-      }
-      if (type == 'minus'){
-            new_val = Math.min(Math.max(1, value - 1))
-            input.val(new_val)
-            quantity = -1
-      }
 
-      if (new_val != value) {
-            var sub_sum = $("#"+ slug + '-subtotal')
-            sub_sum[0].textContent = (parseFloat(sub_sum[0].textContent) + quantity *  parseFloat(price)).toFixed(2)
-            render_total_cost(quantity * parseFloat(price), true)
 
-      }
-      add_to_cart(slug, price, quantity, parseInt(max), "product_title")
 
-})
+        slctr.classList.add("hide-option")
 
+
+
+
+
+
+    const filt = (event) => {
+            slctr.classList.add("show-option")
+            document.querySelectorAll(".option").forEach(option => {
+
+            var matched = option.innerHTML.toLowerCase().includes(event.target.value.toLowerCase())
+            const synonims = JSON.parse(localStorage.getItem(option.innerHTML)).synonims.map(s => s.toLowerCase())
+            synonims.forEach(synonim => {
+                matched = matched || synonim.includes(event.target.value.toLowerCase())
+            })
+
+            if (matched){
+                option.classList.remove("hide-option")
+                option.classList.add("show-option")
+            } else {
+                option.classList.add("hide-option")
+                option.classList.remove("show-option")
+            }
+        })
+    }
+
+        loc.addEventListener("focus", ()=> slctr.classList.add("show-option"), )
+        loc.addEventListener("blur", ()=> {
+            console.log("lost-focus")
+
+            setTimeout(()=> {
+                console.log(loc.value)
+                if (localStorage.getItem("chosen-location")){
+                    loc.value = localStorage.getItem("chosen-location")
+                }
+
+                slctr.classList.add("hide-option")
+                slctr.classList.remove("show-option")},
+                200)
+        })
+
+        loc.addEventListener("input", filt)
+
+    }
+}
 
 
 

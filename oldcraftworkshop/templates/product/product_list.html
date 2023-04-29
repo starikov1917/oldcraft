@@ -24,7 +24,7 @@
                 <div class="card-item">
                     <div class="card-item__body">
                         <a href="{{ object.get_absolute_url }}">
-                            <div class="card-item__preview mb-2"><img src="{{ object.titlePhoto.image.url}}" alt="">
+                            <div class="card-item__preview mb-2"><img src="{{  object.titlePhoto.image.url }}" alt="">
                             </div>
                         </a>
                         <div class="card-item__name" id="{{ object.slug }}">{{ object.title }}</div>
@@ -43,6 +43,8 @@
         </div>
     </div>
 </div>
+
+<script>init_catalog_listeners()</script>
 
 {% include "modals/added_to_cart.html" %}
 {% endblock content %}
