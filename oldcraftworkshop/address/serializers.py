@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Location
+from .models import Location, Address, BillingAddress
 
 
 
@@ -7,6 +7,15 @@ from .models import Location
 class LocationListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ("title", "gpostCode", "postcodeFormat", "phoneLength", "countryPhoneCode", "isEU", "synonims" )
 
+        fields = ("pk", "title", "gpostCode", "postcodeFormat", "phoneLength", "countryPhoneCode", "isEU", "isUS", "synonims" )
 
+class AddressSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = ("postCode", "city", "addressLine", "firstName", "lastName")
+
+class BillingAddressSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = BillingAddress
+        fields = ("postCode", "city", "addressLine", "firstName", "lastName", "location")

@@ -11,6 +11,7 @@ class Location(models.Model):
     phoneLength = models.IntegerField(default=10, verbose_name="Длина номера телефона без кода")
     countryPhoneCode = models.TextField(max_length=5,blank=False, verbose_name="Телефонный код страны")
     isEU = models.BooleanField(default=True, verbose_name="Входит в ЕС")
+    isUS = models.BooleanField(default=False, verbose_name="В США")
     synonims = models.JSONField(default=synonyms_default, verbose_name="синонимы")
 
     def __str__(self):
@@ -40,7 +41,7 @@ class BillingAddress(models.Model):
     addressLine = models.TextField(max_length=200, null=False, blank=False, verbose_name="Строка адреса")
     firstName = models.TextField(max_length=100, null=False, blank=False, verbose_name="Имя")
     lastName = models.TextField(max_length=100, null=False, blank=False, verbose_name="Фамилия")
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    location = models.CharField("Страна", max_length=100, null=False, blank=False)
 
     def __str__(self):
         return self.location.__str__() + " " + self.city + " " + self.addressLine + " " + self.postCode + " " + self.firstName + " " + self.lastName

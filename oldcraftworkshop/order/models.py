@@ -2,6 +2,7 @@ from django.db import models
 from shipping.models import ShippingMethod
 from address.models import Address, BillingAddress
 from product.models import Product
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -34,7 +35,9 @@ def get_first_status():
 
 
 class Order(models.Model):
-    orderNumber = models.CharField(max_length=10, unique=True, blank=False, null=False, verbose_name="Номер заказа")
+
+
+    orderNumber = models.CharField(max_length=10, verbose_name="Номер заказа")
     createdAt = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
     updatedAt = models.DateTimeField(auto_now=True, verbose_name="Обновлен")
     orderComment = models.TextField(max_length=500, null=True, blank=True, verbose_name="Комментарий к заказу")
@@ -43,7 +46,8 @@ class Order(models.Model):
     address = models.ForeignKey(Address, on_delete=models.PROTECT, null=True, verbose_name="Адресс доставки")
     billingAddress = models.ForeignKey(BillingAddress, null=True, on_delete=models.PROTECT, verbose_name="Адрес счета")
     orderStatus = models.ForeignKey(OrderStatus, on_delete=models.PROTECT, default=get_first_status, verbose_name="Статус")
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_paid = models.BooleanField("Оплачено", default=False)
     def __str__(self):
         return self.orderNumber
 

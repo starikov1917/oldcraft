@@ -33,6 +33,8 @@ from shipping.views import ShippingCost
 urlpatterns = [
 
     path('', SectionListViews.as_view(), name='home'),
+    path("", include('authNew.urls')),
+    path("", include('order.urls')),
     path('admin/', admin.site.urls),
     path("measures/", MeasuresList.as_view()),
     path("api/v1/product/", ProductAPIViewSet.as_view({'get': 'list'})),
@@ -42,12 +44,11 @@ urlpatterns = [
     path("api/v1/cartWeight/", GetCartWeight.as_view()),
     path("api/v1/shippingCost/", ShippingCost.as_view()),
     path("catalog/", include('product.urls')),
+
     path("basket/", static_page("Cart", "basket/basket.html"), name="basket"),
     path("checkout/", create_order, name="checkout"),
 
     path('__debug__/', include('debug_toolbar.urls')),
-
-
 ]
 
 

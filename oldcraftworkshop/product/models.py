@@ -70,6 +70,22 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def getSlug(self):
+        return self.slug
+
+    def getQuantity(self):
+        return self.availableQuantity
+
+    def setQuantity(self, new_value: int):
+        self.availableQuantity = new_value
+
+    def getPrice(self):
+        return self.price
+
+    def getWeight(self):
+        return self.weight
+
+
     class Meta:
         verbose_name = "Товар"
         verbose_name_plural = "Товары"

@@ -205,7 +205,7 @@ $(document).on("click", ".btn-number",function(e) {
 
 });
 
-
+document.querySelectorAll(".color").forEach(el => el.addEventListener("click", ()=> console.log(el)))
 
 
 

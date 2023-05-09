@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "measure",
     'production',
     "rest_framework",
-
+    "authNew",
     "debug_toolbar",
 ]
 

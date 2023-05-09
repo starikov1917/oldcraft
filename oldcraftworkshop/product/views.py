@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import  ModelViewSet
 import json
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import ProductSerializer
 class ProductListView(MenuMixin, ListView):
@@ -97,7 +98,8 @@ class ProductDetailView(MenuMixin, DetailView):
     slug_url_kwarg = 'product_slug'
 
     def get_queryset(self):
-        return get_products()
+        return Product.objects.all()
+
 
     def get_context_data(self,  **kwargs):
         context = super().get_context_data(**kwargs)
@@ -119,6 +121,7 @@ class ProductAPIViewSet(ModelViewSet):
     lookup_field = "slug"
 
 class GetCartWeight(APIView):
+
     def post(self, request):
         print("----------", request.data)
         if "cart" in request.data and request.data["cart"]:

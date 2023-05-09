@@ -1,0 +1,28 @@
+{% load static %}
+
+<div class="base-modal hiden" id="shadow">
+    <div class="close" type="button" data-dismiss="modal" aria-label="Close">
+        <svg class="icon icon-close">
+            <use xlink:href="{% static '/images/sprite.svg' %}#icon-close"></use>
+        </svg>
+    </div>
+</div>
+
+<div class="modal-content2 hiden">
+    <div class="modal-body">
+        <div class="succes-basket">
+            {% block modalcontent %}
+            modal body
+            {% endblock modalcontent %}
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById("shadow").addEventListener("click", ()=> {
+        document.querySelectorAll(".base-modal").forEach(e => e.classList.add("hiden"))
+        document.querySelectorAll(".modal-content2").forEach(e => e.classList.add("hiden"))
+    })
+
+</script>

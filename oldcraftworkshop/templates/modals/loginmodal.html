@@ -1,0 +1,15 @@
+{% extends 'modals/basemodal.html' %}
+
+{% block modalid %}login-modal{% endblock modalid %}
+
+{% block modalcontent %}
+
+<p>We sent you a secret code via email</p>
+<p> Please confirm your email address to process chechout</p>
+<div class="col-10 mt-10 mb-5">
+    <input id="code" class="input__control" placeholder="Secret code" type="text">
+</div>
+<div class="col-10 mb-5">
+    <a class="col-2 button button--basket" onclick="confirmEmail()">Confirm e-mail address</a>
+</div>
+{% endblock modalcontent %}

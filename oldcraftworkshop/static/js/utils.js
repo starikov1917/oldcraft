@@ -132,7 +132,7 @@ function add_to_cart(product_slug, price, quantity, max, product_title){
             cart3[product_slug] = {}
             cart3[product_slug]["quantity"] = quantity
             cart3[product_slug]["price"] = price
-            added_to_cart_notification(product_title)
+            added_to_cart_notification(product_title, "Item added to cart")
             increment_basket_counter()
 
 
@@ -249,7 +249,8 @@ function calculateShippingCost(){
     if (localStorage.getItem("chosen-location") && localStorage.getItem("weight"))  {
         const location = JSON.parse(localStorage.getItem(localStorage.getItem("chosen-location")))        
         const weight = localStorage.getItem("weight")
-        console.log("calculate shipping cost: ", location.gpostCode, weight)
+        const subtotal = document.getElementById("subtotal").value
+        console.log("calculate shipping cost: ", location.pk, weight)
         fetch(`${base_url}api/v1/shippingCost/`, {
             
             headers: {
@@ -259,7 +260,9 @@ function calculateShippingCost(){
             
             body: JSON.stringify({
                 weight: weight,
-                gpostCode: location.gpostCode
+                pk: location.pk,
+                subtotal: subtotal
+
             }),
             method:"POST",
         })      
@@ -290,9 +293,34 @@ function  render_empty_checkout(){
         document.querySelector(".").classList.add("hiden")
 
 }
-//инициализируем чекаут
 
+//если сменилась локация
+function сountryChanged(){
+    
+   
+
+    temp_loc = localStorage.getItem("chosen-location")
+
+    if (temp_loc) {
+        const shippingCountry = document.getElementById("shipping-country")
+        document.getElementById("location-filter").value = temp_loc
+        calculateShippingCost()
+        console.log(shippingCountry)
+        if (shippingCountry){
+            shippingCountry.value = temp_loc
+            const country = JSON.parse(localStorage.getItem(temp_loc))
+        
+            document.getElementById("tel-code").value = `+${country.countryPhoneCode}`
+
+        }
+        
+
+    }
+
+}
+//инициализируем чекаут
 function initCheckout(){
+
     const loc = document.getElementById("location-filter")
     const slctr = document.getElementById("location-selector")
     const cart = localStorage.getItem(CART_KEY)
@@ -300,7 +328,10 @@ function initCheckout(){
         render_empty_checkout()
     } else {
 
-
+        email = sessionStorage.getItem("email")
+        console.log("asdasd", email)
+        if (email)
+            {document.getElementById("email").value = email}
         
         
 
@@ -323,20 +354,17 @@ function initCheckout(){
                     console.log(loc.synonims)
                     option.addEventListener("click", (event)=> {            
                         localStorage.setItem("chosen-location", event.target.textContent)
-                        loc.value = event.target.textContent
+                        console.log("-------",event.target.textContent)
                         slctr.classList.add("hide-option")
-                        slctr.classList.remove("show-option")
-                        calculateShippingCost()
-                        console.log("click")
+                        slctr.classList.remove("show-option")                        
+                        сountryChanged()
+
                     })
                 })
             })
 
                 
-        if (localStorage.getItem("chosen-location")){ 
-            loc.value = localStorage.getItem("chosen-location")
-            calculateShippingCost()
-        }
+        сountryChanged()
 
         const cart = {cart: localStorage.getItem(CART_KEY)}
 
@@ -421,4 +449,192 @@ function initCheckout(){
 
 
 
+function copyToBilling(){
+    document.getElementById("billing-country").value = document.getElementById("shipping-country").value
+    document.getElementById("billing-first-name").value = document.getElementById("shipping-first-name").value
+    document.getElementById("billing-last-name").value = document.getElementById("shipping-last-name").value
+    document.getElementById("billing-city").value = document.getElementById("shipping-city").value
+    
+    document.getElementById("billing-index").value = document.getElementById("shipping-index").value
+    document.getElementById("billing-address").value = document.getElementById("shipping-address").value
 
+}
+
+function getAccess(){
+    document.querySelectorAll(".base-modal").forEach(e => e.classList.remove("hiden"))
+    
+    document.querySelectorAll(".modal-content2").forEach(e => e.classList.remove("hiden"))
+    console.log(document.getElementById("email").value)
+    const data = {email: document.getElementById('email').value}
+
+    fetch(`${base_url}getaccess/`, {
+        
+        headers: {
+            'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(data)
+    })      
+        .then(response =>  {
+            if (response.ok) {
+                return response.json()
+            }
+
+        })        
+        .then(data => {
+            localStorage.setItem("token", data)
+            document.getElementById("code").classList.remove("hiden")
+
+
+    })  
+}
+
+
+
+function logout(){
+    fetch(`${base_url}logout/`, {
+        headers: {
+            'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+            "Content-Type": "application/json",
+        }
+    })
+    .then(response =>  {
+        if (response.ok) {
+            console.log("logout succes")
+            location.reload()
+        } else {
+            throw new Error("something wrong")
+        }
+
+    })
+    .catch(error => {
+        console.error("logout error")
+    })  
+}
+
+
+
+function confirmEmail(){
+
+    const data = {email: document.getElementById('email').value, token: localStorage.getItem("token"), code: document.getElementById('code').value}
+    console.log("data", data)
+    fetch(`${base_url}confirmemail/`, {
+        
+        headers: {
+            'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+            "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(data)
+    })      
+        .then(response =>  {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw new Error("Wrong code")
+            }
+
+        })        
+        .then(data => {
+            document.querySelectorAll(".base-modal").forEach(e => e.classList.add("hiden"))
+            document.querySelectorAll(".modal-content2").forEach(e => e.classList.add("hiden"))
+            document.getElementById('email').value = data
+            sessionStorage.setItem("email", data)
+            location.reload()
+            document.getElementById("code").classList.remove("input--error")
+        })
+        .catch(error => {
+
+            document.getElementById("code").classList.add("input--error")
+
+        })
+}
+
+function checkout(){
+    console.log("started checkout")
+    var validated = true
+    const data = {}
+
+    document.querySelectorAll(".inpt").forEach(inp => 
+        {         
+            if (inp.classList.contains("required"))
+            {
+                if (inp.getAttribute("name") == "string")
+                {
+                    if (inp.value == "")
+                        {
+                            validated = false
+                            inp.parentElement.classList.add("input--error")}
+                        else
+                        {
+                            data[inp.getAttribute("id")] = inp.value 
+                            inp.parentElement.classList.remove("input--error")
+                        }
+                } else if (inp.getAttribute("name") == "vat") {
+                    console.log(inp.value)
+                    if (inp.checked) {
+                        data[inp.getAttribute("id")] = inp.value 
+                        document.getElementById("vat-text").classList.remove("red-text")
+                    } 
+                    else
+                    {
+                        validated = false
+                        document.getElementById("vat-text").classList.add("red-text")
+                    }
+
+
+                }
+                else if (inp.getAttribute("name") == "tel") {
+                    if (inp.value.length != 9)
+                    {
+                        inp.parentElement.classList.add("input--error")
+                    } else {
+                        data[inp.getAttribute("id")] = inp.value 
+                        inp.parentElement.classList.remove("input--error")
+                    }
+                }
+                else if (inp.getAttribute("name") == "postcode") {
+                    data[inp.getAttribute("id")] = inp.value 
+                }
+            } 
+            else {
+                data[inp.getAttribute("id")] = inp.value 
+            }
+
+            
+            
+
+        })
+
+    data["cart"] = localStorage.getItem(CART_KEY)
+
+    console.log("data ", data)
+    if (validated) {
+        fetch(`${base_url}api/v1/order/`, {
+            
+            headers: {
+                'X-CSRFToken': document.getElementsByName("csrfmiddlewaretoken")[0].value,
+                "Content-Type": "application/json",
+            },            
+            body: JSON.stringify(data),
+            method:"POST",
+        })
+        .then(response => {
+            if (response.ok) {return response.json()}
+            else {
+                throw Error()
+            }
+        })  
+        .then(data => {
+            console.log(data)
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+    }
+        
+
+
+}
