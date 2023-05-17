@@ -30,10 +30,15 @@
                         <div class="card-item__name" id="{{ object.slug }}">{{ object.title }}</div>
                     </div>
                     <div class="card-item__footer">
-                        <div class="card-item__price">€{{ object.price }}</div>
+
+                        <div class="card-item__price">{% if  object.has_options %}From {% endif%}€{{ object.price }}</div>
                         <div class="card-item__btn">
-                            <a class="button button--plain" href="{{ object.get_absolute_url }}"> More </a>
+                            {% if  object.has_options %}
+                            <a class="button button--plain" style="max-width:600px" href="{{ object.get_absolute_url }}">View variants</a>
+                            {% else %}
                             <a class="button add_from_catalog" data-slug="{{object.slug}}" data-price="{{object.price}}" data-max="{{object.availableQuantity}}">Add to cart</a>
+                            <a class="button button--plain" href="{{ object.get_absolute_url }}"> More </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

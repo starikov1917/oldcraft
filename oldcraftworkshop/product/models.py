@@ -63,9 +63,11 @@ class Product(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Базовая цена")
     description = models.TextField(max_length=1000, blank=True, verbose_name="Подробное описание")
     isCounatable = models.BooleanField(default=True)
+    has_options = models.BooleanField(default=False)
     availableQuantity = models.IntegerField(default=0, verbose_name="Доступное количество")
     subsection = models.ForeignKey(SubSection, null=True, blank=True, on_delete=models.PROTECT)
     section = models.ForeignKey(Section, null=True, blank=True, on_delete=models.PROTECT)
+
 
     def __str__(self):
         return self.title
@@ -107,4 +109,24 @@ class RequiredMeasurementSet(models.Model):
 
     def __str__(self):
         return self.product.__str__() + " -> " + self.measureSet.__str__()
+
+
+class Product_option(models.Model):
+
+    slug = models.SlugField(max_length=50, unique=True, verbose_name="Slug")
+    title = models.CharField(max_length=150, verbose_name="Название")
+    description = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Подробное описание")
+    rating = models.IntegerField(default=100, verbose_name="Рейтинг")
+    isActive = models.BooleanField(default=True, verbose_name="Активный?")
+    price = models.DecimalField(decimal_places=2, max_digits=10, blank=True, null=True, verbose_name="Базовая цена")
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, null=True, blank=True, related_name="options", verbose_name="Товар")
+
+    def __str__(self):
+        return self.title
+
+    def getSlug(self):
+        return self.slug
+
+    def getPrice(self):
+        return  self.price
 

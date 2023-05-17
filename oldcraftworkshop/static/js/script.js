@@ -201,8 +201,6 @@ $(document).on("click", ".btn-number",function(e) {
     var sub_total = $("#sub-total")
 
     sub_total[0].textContent = (parseFloat(sub_total[0].getAttribute("data-price")) * new_val).toFixed(2)
-
-
 });
 
 document.querySelectorAll(".color").forEach(el => el.addEventListener("click", ()=> console.log(el)))

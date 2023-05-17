@@ -28,7 +28,7 @@ function init_catalog_listeners(){
         const price = element.getAttribute('data-price')
         const slug = element.getAttribute('data-slug')
         const title = document.querySelector(`#${slug}`).innerHTML
-        add_to_cart(slug, price, 1, max, title)   
+        add_to_cart(slug, price, 1, max, title, slug, null, null)   
     }))
     document.querySelector(".modal-added-item").addEventListener("click", ()=> document.querySelector(".modal-added-item").classList.add("hiden"))
 }
@@ -37,14 +37,59 @@ function init_catalog_listeners(){
 function init_card_listeners(){
     document.querySelectorAll(".add_from_card").forEach(element => {
         element.addEventListener("click", ()=>{
-            const max = element.getAttribute('data-max')
-            const price = element.getAttribute("data-price")
-            const slug = element.getAttribute('data-slug')
-            const quantity = parseInt(document.querySelector(".count-current__value").value)
-            const title = document.querySelector(".title").innerHTML
-            add_to_cart(slug, price, Number(quantity), max, title)
+            if (element.hasAttribute("requared-material") && element.getAttribute("material-slug") == "") {
+                window.alert("Choose material")
+            } else {
+
+
+                const max = element.getAttribute('data-max')
+                const price = element.getAttribute("data-price")
+                var slug = element.getAttribute('data-slug')
+                var unique_slug = slug
+                const quantity = parseInt(document.querySelector(".count-current__value").value)
+                const title = document.querySelector(".title").innerHTML
+                var option_slug
+                if (element.getAttribute("option-slug")) {
+                    option_slug = element.getAttribute("option-slug")
+                    unique_slug = unique_slug + "--" + element.getAttribute("option-slug")            
+                }
+                var material_slug
+                var material_quantity
+                if (element.getAttribute("material-slug")) {
+                    material_slug = element.getAttribute("material-slug")
+                    material_quantity = element.getAttribute("material-quantity")
+                    console.log("вот такой материал", material_slug)
+                    unique_slug = unique_slug + "--" + element.getAttribute("material-slug")       
+                    
+                }
+                
+                add_to_cart(unique_slug, price, Number(quantity), max, title, slug, option_slug, material_slug, material_quantity)
+            }
         })        
     })
+
+    document.querySelectorAll(".type-select__label").forEach(element => element.addEventListener("click", () => {
+        const inpt = element.parentNode.querySelector("input")
+        const btm = document.querySelector(".add_from_card")
+        btm.setAttribute("option-slug", inpt.value)
+        const sub_total = document.getElementById("sub-total")
+        sub_total.innerHTML = inpt.getAttribute("data-price")
+        sub_total.setAttribute("data-price", inpt.getAttribute("data-price"))
+
+        btm.setAttribute("data-price", inpt.getAttribute("data-price"))
+        const count = document.getElementsByName("count")[0]
+        count.value = 1
+    }))
+
+    document.querySelectorAll(".material-select__label").forEach(element => element.addEventListener("click", () => {
+        const inpt = element.parentNode.querySelector("input")
+        const btm = document.querySelector(".add_from_card")
+        btm.setAttribute("material-slug", inpt.value)
+    }))
+
+
+
+
 }
 
 
@@ -110,7 +155,7 @@ function delete_from_cart(product_slug) {
 
 
 
-function add_to_cart(product_slug, price, quantity, max, product_title){
+function add_to_cart(product_slug, price, quantity, max, product_title, slug, option_slug, material_slug, material_quantity){
     cart3 = JSON.parse(localStorage.getItem(CART_KEY))
     if (cart3 == null){
         cart3 = {}
@@ -132,6 +177,10 @@ function add_to_cart(product_slug, price, quantity, max, product_title){
             cart3[product_slug] = {}
             cart3[product_slug]["quantity"] = quantity
             cart3[product_slug]["price"] = price
+            cart3[product_slug]["product"] = slug
+            cart3[product_slug]["option"] = option_slug
+            cart3[product_slug]["material"] = material_slug
+            cart3[product_slug]["material_quantity"] = material_quantity
             added_to_cart_notification(product_title, "Item added to cart")
             increment_basket_counter()
 
@@ -160,28 +209,37 @@ function renderCart(){
     if (!(cart) || (Object.keys(cart).length === 0 && cart.constructor === Object))  {
         render_empty_cart()
     } else {
-        for (slug in cart) {            
+        for (unique_slug in cart) {
+            const temp_unic_slug = unique_slug
+            const product = cart[unique_slug]['product']
+            console.log(unique_slug, product)        
             const clone = template.content.cloneNode(true);
             const row = clone.querySelector(".basket-item")
-            row.setAttribute("id", slug)
+            row.setAttribute("id", unique_slug)
             const del_button = clone.querySelector(".del-btn")
-            del_button.setAttribute("data-slug", slug)
-            const temp = slug
+            del_button.setAttribute("data-slug", unique_slug)
             const title = clone.querySelector(".basket-item__name")
-            title.setAttribute("id", `${slug}-title`)
+            title.setAttribute("id", `${unique_slug}-title`)
             const quantity = clone.querySelector(".count-current__value")
-            quantity.value = cart[slug]['quantity']
-            quantity.setAttribute("data-slug", slug)
-            quantity.setAttribute("id", `${slug}-quantity`)
+            quantity.value = cart[unique_slug]['quantity']
+            quantity.setAttribute("data-slug", unique_slug)
+            quantity.setAttribute("id", `${unique_slug}-quantity`)
             const image = clone.querySelector("img")
-            image.setAttribute("id", `${slug}-img`)
+            image.setAttribute("id", `${unique_slug}-img`)
             const price = clone.querySelector(".subtotal")
-            price.setAttribute("id", `${slug}-subtotal`)
-            
-            fetch(`${base_url}api/v1/product/${slug}/`)
+            price.setAttribute("id", `${unique_slug}-subtotal`)            
+            console.log(`${base_url}api/v1/product/${product}/`)
+            const material = clone.querySelector(".material")
+            if (cart[unique_slug]['material']) {
+                material.setAttribute("material", cart[unique_slug]['material'])
+            }
+
+            fetch(`${base_url}api/v1/product/${product}/`)
+
                 .then(response => response.json())
                 .then(data => {
-                    const temp_slug = data.slug
+                    console.log(data)
+                    const temp_slug = temp_unic_slug
                     const title = document.querySelector(`#${temp_slug}-title`)
                     title.textContent = data.title
                     document.querySelector(`#${temp_slug}-img`).setAttribute('src', data.titlePhoto.image)  
@@ -198,7 +256,8 @@ function renderCart(){
                     if (data.availableQuantity == 0) {
                         delete_from_cart(temp_slug)
                     }
-                })
+                })            
+
             basket_body.appendChild(clone)
         }
 
@@ -238,7 +297,7 @@ function renderCart(){
                   sub_sum.innerHTML = (parseFloat(sub_sum.innerHTML) + quantity *  parseFloat(price)).toFixed(2)
                   render_total_cost(quantity * parseFloat(price), true)
             }
-            add_to_cart(slug, price, quantity, parseInt(max), "product_title")
+            add_to_cart(slug, price, quantity, parseInt(max), "product_title", null, null, null, null)
         
         })
     })

@@ -8,13 +8,11 @@
             <ul class="breadcrumb__list">
                 <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'catalog' %}">Catalog</a></li>
                 {% if object.section %}
-                <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'section' object.section.slug %}">{{
-                    object.section.title }}</a></li>
+                <li class="breadcrumb__item"><a class="breadcrumb__link" href="{% url 'section' object.section.slug %}">{{object.section.title}}</a></li>
                 {% endif %}
                 {% if object.subsection %}
                 <li class="breadcrumb__item"><a class="breadcrumb__link"
-                                                href="{% url 'subsection' object.section.slug object.subsection.slug %}">{{
-                    object.subsection.title }}</a></li>
+                                                href="{% url 'subsection' object.section.slug object.subsection.slug %}">{{object.subsection.title}}</a></li>
                 {% endif %}
                 <li class="breadcrumb__item">
                     <span class="breadcrumb__link breadcrumb__link--current">{{ title }}</span>
@@ -68,6 +66,19 @@
                     </div>
 
                     {% if object.availableQuantity %}
+                    <div class="select-types">
+                    {% for option in options %}
+
+                    <label class="type-select" for="{{ option.slug }}">
+                      <input id="{{ option.slug }}" class="option" type="radio" name="type" data-price="{% if option.price  %}{{ option.price }}{% else %}{{object.price}}{% endif %}" value="{{ option.slug }}" checked="checked">
+                      <div class="type-select__label">{{ option.title }}</div>
+                    </label>
+                    {% endfor %}
+                    </div>
+
+
+
+
                     <div class="section-card-count mb-2 mb-md-3" data-entity="quantity-block" style="">
                         <div class="section-title section-card-count__title">Quantity:</div>
                         <div class="count-current">
@@ -84,28 +95,67 @@
                         </div>
                         <div class="section-card-count__name">pcs.</div>
                     </div>
-
-
                     <div class="mb-3 mb-md-4">
                         <div class="basket-summ mb-1">Total: €<span
-                                id="sub-total" data-price="{{ object.price }}">{{ object.price }}</span></div>
+                                id="sub-total"
+                                {% if options.last.price %}
+                                data-price="{{ options.last.price }}">{{ options.last.price }}
+                                {% else %}
+                                data-price="{{ object.price }}">{{ object.price }}
+                                {% endif %}</span>
+                        </div>
+
                     </div>
+
+
+
                     {% endif %}
 
                 </div>
             </div>
             {% if object.availableQuantity %}
+
+            <div class="select-types">
+            {% for material in materials %}
+                    <label class="type-select" for="{{ material.slug }}">
+
+                      <input  id="{{ material.slug }}" class="option" type="radio" name="material"  value="{{ material.slug }}"  >
+                      <div class="material-select__label" >
+                        <div class="material-image mb-1 mt-1" style="width:150px" material-slug="{{ material.slug }}">
+                            <img src="{{ material.image.url }}">
+                        </div>
+                        <div class="">{{ material.title }}</div>
+                        {% if  material.description %}
+                        <div class="">{{ material.description }}</div>
+                        {% endif %}
+                      </div>
+                    </label>
+            {% endfor %}
+
+
+            </div>
+
+
+
+
             <div class="offset-lg-7 col-lg">
                 <div class="row">
                     <div class="col-lg-5 col-md-4" style="display: block;">
                         <button class="button button--card h-50 add_from_card" data-slug="{{object.slug}}"
-                                data-price="{{object.price}}" data-max="{{object.availableQuantity}}">Add to cart
+                                data-price="{{object.price}}" data-max="{{object.availableQuantity}}"
+                            {% if options %}
+                                option-slug="{{ options.last.slug }}"
+                            {% endif %}
+                            {% if materials %}
+                                requared-material material-slug=""
+                                material-quantity="{{ requaried_quantity }}"
+                            {% endif %}
+                                >Add to cart
                         </button>
                     </div>
                 </div>
             </div>
             {% endif %}
-
         </div>
     </div>
 </div>

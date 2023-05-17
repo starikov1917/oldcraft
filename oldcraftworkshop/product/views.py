@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
-from .models import Section, SubSection, ProductImage,Product
+from .models import Section, SubSection, ProductImage,Product, Product_option
 # Create your views here.
 from mixins.mixins import MenuMixin
 from .logic import get_subsection, get_sections, get_section, get_subsections, get_products, get_product
@@ -12,8 +12,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import  ModelViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
-
 from .serializers import ProductSerializer
+from material.models import RequiredMaterialType, Material,MaterialType
+
 class ProductListView(MenuMixin, ListView):
     model = Product
 
@@ -109,7 +110,16 @@ class ProductDetailView(MenuMixin, DetailView):
         context["sections"] = self.get_available_sections()
         context['gallery'] = [product.titlePhoto.image] # фото анонса
         context['gallery'] += list(map(lambda product: product.image, list(ProductImage.objects.filter(product__slug=product.slug))))  # все связанные фото
+        if product.has_options:
+            context["options"] = Product_option.objects.filter(product=product, isActive=True)
 
+        requiredMaterialType = RequiredMaterialType.objects.filter(product=product)
+        if requiredMaterialType:
+            req_type = requiredMaterialType.first()
+            context["materials"] = Material.objects.filter(
+                is_active=True,
+                materialType=req_type.materialType,
+                availableQuantity__gte=req_type.requiredQuantity)
         return context
 
 
